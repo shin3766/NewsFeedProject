@@ -6,6 +6,7 @@ public record PostSearchConditionParam(
         String keyword
 ) {
     public int offset() {
-        return 0;
+        if (page == 0) return 0;
+        return page * size;
     }
 }

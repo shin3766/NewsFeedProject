@@ -6,11 +6,13 @@ import com.example.newsfeedproject.dto.PostSearchConditionParam;
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 
 @Repository
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class PostDynamicRepository {
 
     private final JdbcTemplate jdbcTemplate;
@@ -38,7 +40,7 @@ public class PostDynamicRepository {
             while (rs.next()) {
                 var id = rs.getLong(1);
                 var title = rs.getString(2);
-                var createdAt = rs.getTimestamp(3).toLocalDateTime();
+                var createdAt = rs.getTimestamp("CREATED_AT").toLocalDateTime();
 
                 result.add(new PostListItemDto(id, title, createdAt));
             }
