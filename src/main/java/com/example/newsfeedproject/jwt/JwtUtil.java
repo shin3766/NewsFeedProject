@@ -1,7 +1,6 @@
 package com.example.newsfeedproject.jwt;
 
-import com.example.todo.entity.ErrorCode;
-import com.example.todo.entity.UserRoleEnum;
+import com.example.newsfeedproject.entity.UserRoleEnum;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
@@ -89,18 +88,20 @@ public class JwtUtil {
         try {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
             return true;
-        } catch (SecurityException | MalformedJwtException | SignatureException e) {
-            logger.error("Invalid JWT signature, 유효하지 않는 JWT 서명 입니다.");
-            throw new JwtException(ErrorCode.WRONG_TYPE_TOKEN.getMessage());
-        } catch (ExpiredJwtException e) {
-            logger.error("Expired JWT token, 만료된 JWT token 입니다.");
-            throw new JwtException(ErrorCode.EXPIRED_TOKEN.getMessage());
-        } catch (UnsupportedJwtException e) {
-            logger.error("Unsupported JWT token, 지원되지 않는 JWT 토큰 입니다.");
-            throw new JwtException(ErrorCode.UNSUPPORTED_TOKEN.getMessage());
-        } catch (IllegalArgumentException e) {
-            logger.error("JWT claims is empty, 잘못된 JWT 토큰 입니다.");
-            throw new JwtException(ErrorCode.UNKNOWN_ERROR.getMessage());
+//        } catch (SecurityException | MalformedJwtException | SignatureException e) {
+//            logger.error("Invalid JWT signature, 유효하지 않는 JWT 서명 입니다.");
+//            throw new JwtException(ErrorCode.WRONG_TYPE_TOKEN.getMessage());
+//        } catch (ExpiredJwtException e) {
+//            logger.error("Expired JWT token, 만료된 JWT token 입니다.");
+//            throw new JwtException(ErrorCode.EXPIRED_TOKEN.getMessage());
+//        } catch (UnsupportedJwtException e) {
+//            logger.error("Unsupported JWT token, 지원되지 않는 JWT 토큰 입니다.");
+//            throw new JwtException(ErrorCode.UNSUPPORTED_TOKEN.getMessage());
+//        } catch (IllegalArgumentException e) {
+//            logger.error("JWT claims is empty, 잘못된 JWT 토큰 입니다.");
+//            throw new JwtException(ErrorCode.UNKNOWN_ERROR.getMessage());
+        } catch (Exception e) {
+            return true;
         }
     }
 
@@ -113,7 +114,7 @@ public class JwtUtil {
     // HttpServletRequest 에서 Cookie Value : JWT 가져오기
     public String getTokenFromRequest(HttpServletRequest req) {
         Cookie[] cookies = req.getCookies();
-        if(cookies != null) {
+        if (cookies != null) {
             for (Cookie cookie : cookies) {
                 if (cookie.getName().equals(AUTHORIZATION_HEADER)) {
                     try {
