@@ -3,7 +3,6 @@ package com.example.newsfeedproject.config;
 
 import com.example.newsfeedproject.jwt.JwtAuthenticationFilter;
 import com.example.newsfeedproject.jwt.JwtAuthorizationFilter;
-import com.example.newsfeedproject.jwt.JwtExceptionFilter;
 import com.example.newsfeedproject.jwt.JwtUtil;
 import com.example.newsfeedproject.security.UserDetailsServiceImpl;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
@@ -28,13 +27,11 @@ public class WebSecurityConfig {
     private final JwtUtil jwtUtil;
     private final UserDetailsServiceImpl userDetailsService;
     private final AuthenticationConfiguration authenticationConfiguration;
-    private final JwtExceptionFilter jwtExceptionFilter;
 
-    public WebSecurityConfig(JwtUtil jwtUtil, UserDetailsServiceImpl userDetailsService, AuthenticationConfiguration authenticationConfiguration, JwtExceptionFilter jwtExceptionFilter) {
+    public WebSecurityConfig(JwtUtil jwtUtil, UserDetailsServiceImpl userDetailsService, AuthenticationConfiguration authenticationConfiguration) {
         this.jwtUtil = jwtUtil;
         this.userDetailsService = userDetailsService;
         this.authenticationConfiguration = authenticationConfiguration;
-        this.jwtExceptionFilter = jwtExceptionFilter;
     }
 
     @Bean
@@ -74,7 +71,6 @@ public class WebSecurityConfig {
         // 필터 관리
         http.addFilterBefore(jwtAuthorizationFilter(), JwtAuthenticationFilter.class);
         http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
-        http.addFilterBefore(jwtExceptionFilter, JwtAuthenticationFilter.class);
         return http.build();
     }
 }
