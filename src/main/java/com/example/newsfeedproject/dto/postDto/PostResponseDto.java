@@ -2,7 +2,6 @@ package com.example.newsfeedproject.dto.postDto;
 
 import com.example.newsfeedproject.entity.Post;
 import lombok.Getter;
-
 import java.time.LocalDateTime;
 
 @Getter

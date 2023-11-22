@@ -1,16 +1,16 @@
 package com.example.newsfeedproject.controller;
 
+import com.example.newsfeedproject.service.PostService;
 import com.example.newsfeedproject.dto.postDto.PostRequestDto;
 import com.example.newsfeedproject.dto.postDto.PostResponseDto;
-import com.example.newsfeedproject.service.PostService;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RequestMapping("/api/v1/post")
+// todo all
 @RestController
+@RequestMapping("/api/v1/post")
 @RequiredArgsConstructor
 public class PostController {
 
@@ -30,9 +30,10 @@ public class PostController {
 
     // READ: 게시물 선택 조회
     @GetMapping("/{id}")
-    public PostResponseDto getPost() {
-
+    public PostResponseDto getPost(@PathVariable Long id) {
+        return postService.getPost(id);
     }
+
 
     // UPDATE: 선택 게시물 업데이트
     @PatchMapping("/{id}")
@@ -46,4 +47,4 @@ public class PostController {
         return postService.deletePost(id);
     }
 }
-}
+
