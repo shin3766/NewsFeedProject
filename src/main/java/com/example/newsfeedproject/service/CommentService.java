@@ -69,7 +69,7 @@ public class CommentService {
                 result.getTotalElements(),
                 result.getTotalPages(),
                 pageable.getPageNumber(),
-                result.getSize()
+                data.size()
         );
 
     }
