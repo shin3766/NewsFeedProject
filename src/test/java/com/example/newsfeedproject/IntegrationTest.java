@@ -4,7 +4,6 @@ import com.example.newsfeedproject.entity.Comment;
 import com.example.newsfeedproject.entity.Post;
 import com.example.newsfeedproject.entity.User;
 import com.example.newsfeedproject.entity.UserRoleEnum;
-import com.example.newsfeedproject.manager.UserStatusManager;
 import com.example.newsfeedproject.repository.CommentRepository;
 import com.example.newsfeedproject.repository.PostDynamicRepository;
 import com.example.newsfeedproject.repository.PostRepository;
