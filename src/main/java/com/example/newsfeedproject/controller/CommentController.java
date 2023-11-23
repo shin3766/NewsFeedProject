@@ -5,8 +5,7 @@ import com.example.newsfeedproject.dto.UpdateCommentRequest;
 import com.example.newsfeedproject.service.CommentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/comment")
@@ -15,17 +14,20 @@ public class CommentController {
 
     private final CommentService commentService;
 
+    @PostMapping
     public ResponseEntity<?> createComment(CreateCommentRequest request){
         var response = commentService.createComment(request);
         return ResponseEntity.ok(response);
     }
-
+    @PatchMapping
     public ResponseEntity<?> updateComment(UpdateCommentRequest request){
         var response = commentService.updateComment(request);
         return ResponseEntity.ok(response);
     }
 
-    public ResponseEntity<?> deleteComment(){
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteComment(@PathVariable Long id){
+        commentService.deleteComment(id);
         return null;
     }
 }

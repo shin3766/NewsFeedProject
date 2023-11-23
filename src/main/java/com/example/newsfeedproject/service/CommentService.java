@@ -4,7 +4,6 @@ import com.example.newsfeedproject.dto.CommentDto;
 import com.example.newsfeedproject.dto.CreateCommentRequest;
 import com.example.newsfeedproject.dto.UpdateCommentRequest;
 import com.example.newsfeedproject.entity.Comment;
-import com.example.newsfeedproject.entity.User;
 import com.example.newsfeedproject.exception.NotFoundEntityException;
 import com.example.newsfeedproject.manager.UserStatusManager;
 import com.example.newsfeedproject.repository.CommentRepository;
@@ -37,10 +36,21 @@ public class CommentService {
         Comment comment = commentRepository.findById(req.id())
                 .orElseThrow(NotFoundEntityException::new);
 
-        if(!comment.getAuthor().equals(loginUser.getUsername())){
-            throw new AccessDeniedException("댓글 수정 권한이 없습니다");
+        if (!comment.getAuthor().equals(loginUser.getUsername())) {
+            throw new AccessDeniedException("댓글 수정 권한이 없습니다.");
         }
         comment.update(req);
         return CommentDto.of(comment);
+    }
+
+    public void deleteComment(Long id) {
+        var loginUser = userStatusManager.getLoginUser();
+        Comment comment = commentRepository.findById(id)
+                .orElseThrow(NotFoundEntityException::new);
+
+        if (!comment.getAuthor().equals(loginUser.getUsername())) {
+            throw new AccessDeniedException("댓글 삭제 권한이 없습니다.");
+        }
+        commentRepository.deleteById(id);
     }
 }
