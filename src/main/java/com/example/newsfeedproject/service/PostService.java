@@ -25,6 +25,7 @@ public class PostService {
 
     public PageDto getPostList(PostSearchConditionParam condition) {
         return postDynamicRepository.findListByCondition(condition);
+    }
 
     // post 등록하기
     public PostResponseDto createPost(PostRequestDto requestDto){
