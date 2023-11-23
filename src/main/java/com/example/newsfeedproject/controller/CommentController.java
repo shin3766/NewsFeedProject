@@ -1,6 +1,7 @@
 package com.example.newsfeedproject.controller;
 
 import com.example.newsfeedproject.dto.CreateCommentRequest;
+import com.example.newsfeedproject.dto.MessageDto;
 import com.example.newsfeedproject.dto.UpdateCommentRequest;
 import com.example.newsfeedproject.service.CommentService;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +29,6 @@ public class CommentController {
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteComment(@PathVariable Long id){
         commentService.deleteComment(id);
-        return null;
+        return ResponseEntity.ok(new MessageDto("댓글 삭제 성공"));
     }
 }
