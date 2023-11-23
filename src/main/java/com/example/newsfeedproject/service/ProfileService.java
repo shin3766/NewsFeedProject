@@ -29,8 +29,8 @@ public class ProfileService {
             profileUser.setUsername(requestDto.getUsername());
         }
 
-        if (requestDto.getContents() != null) {
-            profileUser.setContents(requestDto.getContents());
+        if (requestDto.getIntro() != null) {
+            profileUser.setIntro(requestDto.getIntro());
         }
 
         if (requestDto.getEmail() != null) {

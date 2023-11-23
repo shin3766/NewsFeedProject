@@ -43,6 +43,7 @@ public class UserService {
     public void signup(SignupRequestDto requestDto) {
         String username = requestDto.getUsername();
         String password = passwordEncoder.encode(requestDto.getPassword());
+        String intro = requestDto.getIntro();
 
         // 회원 중복 확인
         Optional<User> checkUsername = userRepository.findByUsername(username);
@@ -67,7 +68,7 @@ public class UserService {
         }
 
         // 사용자 등록
-        User user = new User(username, password, email, role);
+        User user = new User(username, password, email, role, intro);
         userRepository.save(user);//데이터베이스의 한 로우는 해당하는 엔티티 클래스의 한 객체다
     }
 
