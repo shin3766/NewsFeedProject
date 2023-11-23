@@ -18,7 +18,8 @@ public class PostService {
     private final PostRepository postRepository;
 
     // post 등록하기
-    public PostResponseDto createPost(PostRequestDto requestDto){
+    @Transactional
+    public PostResponseDto createPost(PostRequestDto requestDto) {
         // 새로운 post객체에 requestDto 넣기
         Post post = Post.builder()
                 .content(requestDto.getContent())
@@ -54,15 +55,13 @@ public class PostService {
 
     // post 업데이트
     @Transactional
-    public Long updatePost(Long id, PostRequestDto requestDto) {
+    public PostResponseDto updatePost(Long id, PostRequestDto requestDto) {
         // DB에 해당 post 있는지 확인
         Post post = findPost(id);
-
         // requestDto로 post객체 업데이트
         post.update(requestDto);
-
         //id 반환
-        return id;
+        return new PostResponseDto(post);
     }
 
     // post 선택 삭제

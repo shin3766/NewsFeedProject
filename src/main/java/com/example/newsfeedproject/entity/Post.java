@@ -28,10 +28,8 @@ public class Post {
     private LocalDateTime createdAt;
     @LastModifiedDate
     private LocalDateTime activatedAt;
-
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user = new User();
+    @ManyToOne(fetch = FetchType.LAZY)
+    private User user;
 
     @Builder
     private Post(String title, String content) {
@@ -44,14 +42,13 @@ public class Post {
         this.content = requestDto.getContent();
         this.createdAt = LocalDateTime.now();
     }
+
     public void update(PostRequestDto requestDto) {
         this.title = requestDto.getTitle();
         this.content = requestDto.getContent();
     }
 
-    // User 담당과 이야기 필요
-//    public void setUser(User user) {
-//        this.user = user;
-//        user.getPostList().add(this);
-//    }
+    public void setUser(User user) {
+        if (user != null && user.getId() != null) this.user = user;
+    }
 }
