@@ -46,9 +46,10 @@ public class IntegrationTest {
         return userRepository.saveAndFlush(user);
     }
 
-    protected Comment saveComment(String content, User user) {
+    protected Comment saveComment(String content, User user, Post post) {
         return commentRepository.saveAndFlush(Comment.builder()
                 .content(content)
+                .post(post)
                 .user(user)
                 .build()
         );

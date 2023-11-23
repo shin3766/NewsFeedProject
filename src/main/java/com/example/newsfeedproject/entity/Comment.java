@@ -22,6 +22,10 @@ public class Comment {
     @Column
     private String content;
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(nullable = false)
+    private Post post;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(nullable = false)
     private User user;
     @CreatedDate
     private LocalDateTime createdAt;
@@ -29,9 +33,10 @@ public class Comment {
     private LocalDateTime modifiedAt;
 
     @Builder
-    private Comment(String content, User user) {
+    private Comment(String content, User user, Post post) {
         this.content = content;
         this.user = user;
+        this.post = post;
     }
 
     public String getAuthor(){

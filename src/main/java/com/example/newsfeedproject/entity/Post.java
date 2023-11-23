@@ -33,4 +33,10 @@ public class Post {
         this.title = title;
         this.content = content;
     }
+
+    public static Post foreign(Long id) {
+        Post post = new Post();
+        post.id = id;
+        return post;
+    }
 }

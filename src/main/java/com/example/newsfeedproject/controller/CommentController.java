@@ -5,6 +5,7 @@ import com.example.newsfeedproject.dto.MessageDto;
 import com.example.newsfeedproject.dto.UpdateCommentRequest;
 import com.example.newsfeedproject.service.CommentService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,6 +24,12 @@ public class CommentController {
     @PatchMapping
     public ResponseEntity<?> updateComment(UpdateCommentRequest request){
         var response = commentService.updateComment(request);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/{postId}")
+    public ResponseEntity<?> getComments(@PathVariable Long postId, Pageable pageable){
+        var response = commentService.getComments(pageable, postId);
         return ResponseEntity.ok(response);
     }
 

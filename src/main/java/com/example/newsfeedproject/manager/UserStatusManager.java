@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 public class UserStatusManager {
 
     /**
+     * todo
      * JWT 토큰을 추출해서 유저의 정보를 반환한다.
      * @return
      */

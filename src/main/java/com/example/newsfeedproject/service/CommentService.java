@@ -2,12 +2,16 @@ package com.example.newsfeedproject.service;
 
 import com.example.newsfeedproject.dto.CommentDto;
 import com.example.newsfeedproject.dto.CreateCommentRequest;
+import com.example.newsfeedproject.dto.PageDto;
 import com.example.newsfeedproject.dto.UpdateCommentRequest;
 import com.example.newsfeedproject.entity.Comment;
+import com.example.newsfeedproject.entity.Post;
 import com.example.newsfeedproject.exception.NotFoundEntityException;
 import com.example.newsfeedproject.manager.UserStatusManager;
 import com.example.newsfeedproject.repository.CommentRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,6 +30,7 @@ public class CommentService {
         Comment comment = commentRepository.saveAndFlush(Comment.builder()
                 .content(req.content())
                 .user(loginUser)
+                .post(Post.foreign(req.postId()))
                 .build());
         return CommentDto.of(comment);
     }
@@ -52,5 +57,20 @@ public class CommentService {
             throw new AccessDeniedException("댓글 삭제 권한이 없습니다.");
         }
         commentRepository.deleteById(id);
+    }
+
+    public PageDto getComments(Pageable pageable, Long postId) {
+        Page<Comment> result = commentRepository.findByPostId(postId, pageable);
+        var data = result.getContent().stream()
+                .map(CommentDto::of)
+                .toList();
+
+        return new PageDto(data,
+                result.getTotalElements(),
+                result.getTotalPages(),
+                pageable.getPageNumber(),
+                result.getSize()
+        );
+
     }
 }
