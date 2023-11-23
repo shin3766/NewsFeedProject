@@ -31,7 +31,7 @@ public class Post {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    private User user = new User();
+    private User user;
 
     @Builder
     private Post(String title, String content) {

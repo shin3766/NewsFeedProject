@@ -7,10 +7,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Entity // JPA가 관리할 수 있는 Entity 클래스 지정
+@Entity
 @Getter
 @Setter
-@Table(name = "users") // 매핑할 테이블의 이름을 지정
 @NoArgsConstructor
 public class ProfileUser {
 
@@ -37,7 +36,7 @@ public class ProfileUser {
         this.email = requestDto.getEmail();
     }
 
-    public Long getId(){
+    public Long getId() {
         return id;
     }
 }
