@@ -10,7 +10,7 @@ import lombok.Setter;
 @Entity // JPA가 관리할 수 있는 Entity 클래스 지정
 @Getter
 @Setter
-@Table(name = "users") // 매핑할 테이블의 이름을 지정
+@Table(name = "profile") // 매핑할 테이블의 이름을 지정
 @NoArgsConstructor
 public class ProfileUser {
 
