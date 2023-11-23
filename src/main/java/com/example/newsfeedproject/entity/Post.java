@@ -39,6 +39,12 @@ public class Post {
         this.content = content;
     }
 
+    public static Post foreign(Long id) {
+        Post post = new Post();
+        post.id = id;
+        return post;
+    }
+
     public Post(PostRequestDto requestDto) {
         this.title = requestDto.getTitle();
         this.content = requestDto.getContent();
@@ -48,10 +54,4 @@ public class Post {
         this.title = requestDto.getTitle();
         this.content = requestDto.getContent();
     }
-
-    // User 담당과 이야기 필요
-//    public void setUser(User user) {
-//        this.user = user;
-//        user.getPostList().add(this);
-//    }
 }
