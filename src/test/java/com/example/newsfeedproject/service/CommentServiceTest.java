@@ -1,10 +1,7 @@
 package com.example.newsfeedproject.service;
 
 import com.example.newsfeedproject.IntegrationTest;
-import com.example.newsfeedproject.dto.CommentDto;
-import com.example.newsfeedproject.dto.CreateCommentRequest;
-import com.example.newsfeedproject.dto.PageDto;
-import com.example.newsfeedproject.dto.UpdateCommentRequest;
+import com.example.newsfeedproject.dto.*;
 import com.example.newsfeedproject.entity.Comment;
 import com.example.newsfeedproject.entity.Post;
 import com.example.newsfeedproject.entity.User;
@@ -17,7 +14,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.transaction.annotation.Transactional;
 
-import static com.example.newsfeedproject.entity.UserRoleEnum.USER;
+import static com.example.newsfeedproject.entity.UserRole.USER;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.groups.Tuple.tuple;
@@ -44,7 +41,7 @@ class CommentServiceTest extends IntegrationTest {
 
     private void givenLoginUser(User user) {
         given(userStatusManager.getLoginUser())
-                .willReturn(user);
+                .willReturn(JwtUser.of(user));
     }
 
     @DisplayName("댓글 생성 성공")
@@ -55,10 +52,9 @@ class CommentServiceTest extends IntegrationTest {
         // when
         CommentDto response = commentService.createComment(request);
         // then
-        assertThat(response.author()).isEqualTo("홍정기");
         assertThat(response.content()).isEqualTo("content입니다.");
         assertThat(response.createdAt()).isNotNull();
-        assertThat(response.id()).isNotNull();
+        assertThat(response.id()).isEqualTo(loginUser.getId());
     }
 
     @DisplayName("댓글 수정 성공")

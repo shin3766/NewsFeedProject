@@ -1,13 +1,17 @@
 package com.example.newsfeedproject.service;
 
-import com.example.newsfeedproject.entity.User;
+import com.example.newsfeedproject.dto.JwtUser;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 /**
- * 로그인 유저의 상태를 조회하는 매니저 클래스
+ * 로그인 유저의 상태 관리 서비스를 제공합니다.
+ * 1. JWT 기반 로그인 유저 정보 조회
+ * 2. 이메일 인증 코드 관리 서비스
  */
 @Component
 public class UserStatusService {
@@ -15,15 +19,13 @@ public class UserStatusService {
     private final ConcurrentMap<String, String> redis = new ConcurrentHashMap<>();
 
     /**
-     * todo
-     * JWT 토큰을 추출해서 유저의 정보를 반환한다.
+     * JwtAuthorizationFilter에서 인가된 jwt 토큰 정보를 SecurityContext에서 조회한다.
      *
-     * @return
+     * @return jwt 토큰에 담긴 유저 정보 dto를 반환
      */
-    public User getLoginUser() {
-        User user = new User();
-        user.setId(100L);
-        return user;
+    public JwtUser getLoginUser() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        return (JwtUser) auth.getPrincipal();
     }
 
     public void saveEmailAuthCode(String email, String code) {

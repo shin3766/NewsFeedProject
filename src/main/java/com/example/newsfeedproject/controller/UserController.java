@@ -1,13 +1,12 @@
 package com.example.newsfeedproject.controller;
 
 
+import com.example.newsfeedproject.dto.JwtUser;
 import com.example.newsfeedproject.dto.LoginRequestDto;
 import com.example.newsfeedproject.dto.MsgResponseDto;
 import com.example.newsfeedproject.dto.SignupRequestDto;
-import com.example.newsfeedproject.entity.UserRoleEnum;
 import com.example.newsfeedproject.jwt.JwtUtil;
 import com.example.newsfeedproject.service.UserService;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,6 +16,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+
+import static com.example.newsfeedproject.jwt.JwtUtil.*;
 
 @Slf4j
 @Controller
@@ -40,15 +41,21 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<MsgResponseDto> login(@RequestBody LoginRequestDto loginRequestDto, HttpServletResponse response) {
+    public ResponseEntity<MsgResponseDto> login(@RequestBody LoginRequestDto loginRequestDto) {
         try {
-            userService.login(loginRequestDto);
+            JwtUser user = userService.login(loginRequestDto);
+            String accessToken = jwtUtil.createToken(user, ACCESS_TYPE);
+            String refreshToken = jwtUtil.createToken(user, REFRESH_TYPE);
+
+            return ResponseEntity.ok()
+                    .header(AUTHORIZATION_HEADER, accessToken)
+                    .header(REFRESH_AUTHORIZATION_HEADER, refreshToken)
+                    .body(new MsgResponseDto("로그인 성공", HttpStatus.OK.value()));
+
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(new MsgResponseDto(e.getMessage(), HttpStatus.BAD_REQUEST.value()));
+            return ResponseEntity.badRequest()
+                    .body(new MsgResponseDto(e.getMessage(), HttpStatus.BAD_REQUEST.value()));
         }
 
-        response.setHeader(JwtUtil.AUTHORIZATION_HEADER, jwtUtil.createToken(loginRequestDto.getUsername(), UserRoleEnum.USER));
-
-        return ResponseEntity.ok().body(new MsgResponseDto("로그인 성공", HttpStatus.OK.value()));
     }
 }

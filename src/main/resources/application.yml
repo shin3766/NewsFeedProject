@@ -18,6 +18,11 @@ spring:
 jwt:
   secret:
     key: testkeytestkeyeraskdfjlkasdjflksjdflkjsdlkfjlskdjfmustbechanged
+  accessToken:
+    duration: 300000
+  refreshToken:
+    duration: 60000000
+
 
 email:
   auth:
