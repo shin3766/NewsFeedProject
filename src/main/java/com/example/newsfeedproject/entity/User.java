@@ -1,5 +1,6 @@
 package com.example.newsfeedproject.entity;
 
+import com.example.newsfeedproject.dto.profiledto.ProfileRequestDto;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -37,5 +38,15 @@ public class User extends Timestamped{
         this.email = email;
         this.role = role;
         this.intro = intro;
+    }
+
+    public void update(ProfileRequestDto requestDto) {
+        this.username = requestDto.getUsername();
+        this.intro = requestDto.getIntro();
+        this.email = requestDto.getEmail();
+    }
+
+    public Long getId(){
+        return id;
     }
 }

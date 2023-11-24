@@ -2,7 +2,7 @@ package com.example.newsfeedproject.service;
 
 import com.example.newsfeedproject.dto.profiledto.ProfileRequestDto;
 import com.example.newsfeedproject.dto.profiledto.ProfileResponseDto;
-import com.example.newsfeedproject.entity.ProfileUser;
+import com.example.newsfeedproject.entity.User;
 import com.example.newsfeedproject.repository.ProfileRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,7 +21,7 @@ public class ProfileService {
 
     @Transactional
     public void updateProfile(Long id, ProfileRequestDto requestDto) {
-        ProfileUser profileUser = profileRepository.findById(id)
+        User profileUser = profileRepository.findById(id)
                 .orElseThrow(NoSuchElementException::new);
 
         // DTO에서 변경된 필드만 업데이트
@@ -45,13 +45,13 @@ public class ProfileService {
 
     public ProfileResponseDto getProfile(Long id) {
         // 해당 ID에 대한 프로필을 찾음
-        ProfileUser profileUser = findProfile(id);
+        User user = findProfile(id);
 
         // ProfileUser를 ProfileResponseDto로 변환하여 반환
-        return new ProfileResponseDto(profileUser);
+        return new ProfileResponseDto(user);
     }
 
-    private ProfileUser findProfile(Long id) {
+    private User findProfile(Long id) {
         return profileRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("프로파일이 존재하지 않습니다."));
     }

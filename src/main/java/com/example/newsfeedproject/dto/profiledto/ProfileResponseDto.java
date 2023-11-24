@@ -1,11 +1,9 @@
 package com.example.newsfeedproject.dto.profiledto;
 
-import com.example.newsfeedproject.entity.ProfileUser;
+import com.example.newsfeedproject.entity.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.time.LocalDateTime;
 
 @Getter
 @AllArgsConstructor
@@ -18,10 +16,10 @@ public class ProfileResponseDto {
 
 
     // ProfileUser를 받아서 ProfileResponseDto로 변환하는 생성자 추가
-    public ProfileResponseDto(ProfileUser profileUser) {
-        this.id = profileUser.getId();
-        this.username = profileUser.getUsername();
-        this.intro = profileUser.getIntro();
-        this.email = profileUser.getEmail();
+    public ProfileResponseDto(User user) {
+        this.id = user.getId();
+        this.username = user.getUsername();
+        this.intro = user.getIntro();
+        this.email = user.getEmail();
     }
 }
