@@ -1,5 +1,6 @@
 package com.example.newsfeedproject.service;
 
+import com.example.newsfeedproject.dto.JwtUser;
 import com.example.newsfeedproject.entity.User;
 import org.springframework.stereotype.Component;
 
@@ -20,10 +21,10 @@ public class UserStatusService {
      *
      * @return
      */
-    public User getLoginUser() {
+    public JwtUser getLoginUser() {
         User user = new User();
         user.setId(100L);
-        return user;
+        return JwtUser.of(user);
     }
 
     public void saveEmailAuthCode(String email, String code) {

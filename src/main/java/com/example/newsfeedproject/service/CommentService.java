@@ -6,6 +6,7 @@ import com.example.newsfeedproject.dto.PageDto;
 import com.example.newsfeedproject.dto.UpdateCommentRequest;
 import com.example.newsfeedproject.entity.Comment;
 import com.example.newsfeedproject.entity.Post;
+import com.example.newsfeedproject.entity.User;
 import com.example.newsfeedproject.exception.NotFoundEntityException;
 import com.example.newsfeedproject.repository.CommentRepository;
 import lombok.RequiredArgsConstructor;
@@ -28,7 +29,7 @@ public class CommentService {
 
         Comment comment = commentRepository.saveAndFlush(Comment.builder()
                 .content(req.content())
-                .user(loginUser)
+                .user(User.foreign(loginUser.id()))
                 .post(Post.foreign(req.postId()))
                 .build());
         return CommentDto.of(comment);
@@ -40,7 +41,7 @@ public class CommentService {
         Comment comment = commentRepository.findById(req.id())
                 .orElseThrow(NotFoundEntityException::new);
 
-        if (!comment.getAuthor().equals(loginUser.getUsername())) {
+        if (!comment.getAuthor().equals(loginUser.username())) {
             throw new AccessDeniedException("댓글 수정 권한이 없습니다.");
         }
         comment.update(req);
@@ -52,7 +53,7 @@ public class CommentService {
         Comment comment = commentRepository.findById(id)
                 .orElseThrow(NotFoundEntityException::new);
 
-        if (!comment.getAuthor().equals(loginUser.getUsername())) {
+        if (!comment.getAuthor().equals(loginUser.username())) {
             throw new AccessDeniedException("댓글 삭제 권한이 없습니다.");
         }
         commentRepository.deleteById(id);
