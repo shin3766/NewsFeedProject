@@ -6,7 +6,6 @@ import com.example.newsfeedproject.dto.UpdateCommentRequest;
 import com.example.newsfeedproject.entity.Comment;
 import com.example.newsfeedproject.entity.Post;
 import com.example.newsfeedproject.entity.User;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -185,6 +184,27 @@ class CommentControllerTest extends IntegrationTest {
                 .andExpectAll(
                         status().isForbidden(),
                         jsonPath("$.message").value("댓글 삭제 권한이 없습니다.")
+                );
+    }
+
+    @DisplayName("댓글 목록 조회")
+    @Test
+    void getComments() throws Exception {
+        // given
+        for (int i = 0; i < 100; i++) saveComment("test comment" + i, user, post);
+        // when // then
+        mockMvc.perform(get("/api/v1/comment/" + post.getId())
+                        .queryParam("size", "11")
+                        .queryParam("page", "0")
+                )
+                .andDo(print())
+                .andExpectAll(
+                        status().isOk(),
+                        jsonPath("$.data").exists(),
+                        jsonPath("$.totalElement").value(100),
+                        jsonPath("$.totalPage").value(10),
+                        jsonPath("$.currentPage").value(0),
+                        jsonPath("$.size").value(11)
                 );
     }
 }
