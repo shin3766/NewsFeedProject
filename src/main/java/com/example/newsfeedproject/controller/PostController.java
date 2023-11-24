@@ -22,12 +22,6 @@ public class PostController {
         return postService.createPost(requestDto);
     }
 
-    // READ: 게시물 전체 조회
-    @GetMapping
-    public List<PostResponseDto> getPosts() {
-        return postService.getPosts();
-    }
-
     // READ: 게시물 선택 조회
     @GetMapping("/{id}")
     public PostResponseDto getPost(@PathVariable Long id) {
