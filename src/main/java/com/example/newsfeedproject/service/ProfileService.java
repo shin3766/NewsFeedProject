@@ -3,7 +3,6 @@ package com.example.newsfeedproject.service;
 import com.example.newsfeedproject.dto.profiledto.ProfileRequestDto;
 import com.example.newsfeedproject.dto.profiledto.ProfileResponseDto;
 import com.example.newsfeedproject.entity.User;
-import com.example.newsfeedproject.repository.ProfileRepository;
 import com.example.newsfeedproject.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

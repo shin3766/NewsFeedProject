@@ -15,12 +15,8 @@ public class SignupRequestDto {
     @NotBlank(message = "비밀번호는 필수 입력 값입니다.")
     @Pattern(regexp = "(?=.*[0-9])(?=.*[a-zA-Z]).{8,15}", message = "password는 알파벳 대소문자(a~z, A~Z), 숫자(0~9) 8~15자로 구성되어야 합니다.")
     private String password;
-
     private String intro;
-
     @Email
     @NotBlank
     private String email;
-    private boolean admin = false;
-    private String adminToken = "";
 }

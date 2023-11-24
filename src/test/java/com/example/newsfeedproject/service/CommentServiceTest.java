@@ -34,7 +34,7 @@ class CommentServiceTest extends IntegrationTest {
 
     @BeforeEach
     void init() {
-        loginUser = saveUser("홍정기", "1234", "test@spa.com", USER, "intro");
+        loginUser = saveUser("홍정기", "1234", "test@spa.com", USER);
         post = savePost("test", "sample");
         givenLoginUser(loginUser);
     }
@@ -76,7 +76,7 @@ class CommentServiceTest extends IntegrationTest {
     @Test
     void updateCommentWhenOtherUserTry() {
         // given
-        User author = saveUser("윤여준", "1234", "test1@spa.com", USER, "intro");
+        User author = saveUser("윤여준", "1234", "test1@spa.com", USER);
         Comment comment = saveComment("test content", author, post);
         var request = new UpdateCommentRequest(comment.getId(), "after content");
         // when // then
@@ -100,7 +100,7 @@ class CommentServiceTest extends IntegrationTest {
     @Test
     void deleteCommentWhenOtherUserTry() {
         // given
-        User author = saveUser("윤여준", "1234", "test1@spa.com", USER, "intro");
+        User author = saveUser("윤여준", "1234", "test1@spa.com", USER);
         Comment comment = saveComment("test content", author, post);
         // when // then
         assertThatThrownBy(() -> commentService.deleteComment(comment.getId()))

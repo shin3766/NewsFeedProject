@@ -41,8 +41,8 @@ public class IntegrationTest {
         );
     }
 
-    protected User saveUser(String username, String password, String email, UserRole role, String intro) {
-        User user = new User(username, password, email, role, intro);
+    protected User saveUser(String username, String password, String email, UserRole role) {
+        User user = new User(username, password, email, role, "intro");
         return userRepository.saveAndFlush(user);
     }
 
