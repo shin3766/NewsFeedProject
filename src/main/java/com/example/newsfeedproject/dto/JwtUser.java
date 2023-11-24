@@ -1,13 +1,13 @@
 package com.example.newsfeedproject.dto;
 
 import com.example.newsfeedproject.entity.User;
-import com.example.newsfeedproject.entity.UserRoleEnum;
+import com.example.newsfeedproject.entity.UserRole;
 
 public record JwtUser(
         Long id,
         String username,
         String email,
-        UserRoleEnum role
+        UserRole role
 ) {
 
     public static JwtUser of(User user){

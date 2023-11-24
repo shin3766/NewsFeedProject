@@ -4,13 +4,11 @@ package com.example.newsfeedproject.service;
 import com.example.newsfeedproject.dto.LoginRequestDto;
 import com.example.newsfeedproject.dto.SignupRequestDto;
 import com.example.newsfeedproject.entity.User;
-import com.example.newsfeedproject.entity.UserRoleEnum;
+import com.example.newsfeedproject.entity.UserRole;
 import com.example.newsfeedproject.jwt.JwtUtil;
 import com.example.newsfeedproject.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 @Service
 public class UserService {
@@ -53,7 +51,7 @@ public class UserService {
             throw new IllegalArgumentException("중복된 Email 입니다.");
         }
 
-        UserRoleEnum role = UserRoleEnum.USER;
+        UserRole role = UserRole.USER;
 
         // 사용자 등록
         User user = new User(username, password, email, role, intro);

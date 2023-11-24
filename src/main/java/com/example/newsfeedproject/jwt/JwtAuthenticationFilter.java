@@ -1,7 +1,7 @@
 package com.example.newsfeedproject.jwt;
 
 import com.example.newsfeedproject.dto.LoginRequestDto;
-import com.example.newsfeedproject.entity.UserRoleEnum;
+import com.example.newsfeedproject.entity.UserRole;
 import com.example.newsfeedproject.security.UserDetailsImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
@@ -49,7 +49,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
         log.info("로그인 성공 및 JWT 생성");
         String username = ((UserDetailsImpl) authResult.getPrincipal()).getUsername();
-        UserRoleEnum role = ((UserDetailsImpl) authResult.getPrincipal()).getUser().getRole();
+        UserRole role = ((UserDetailsImpl) authResult.getPrincipal()).getUser().getRole();
 
         //message body
         PrintWriter writer = response.getWriter();

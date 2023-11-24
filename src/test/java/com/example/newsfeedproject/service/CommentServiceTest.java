@@ -14,7 +14,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.transaction.annotation.Transactional;
 
-import static com.example.newsfeedproject.entity.UserRoleEnum.USER;
+import static com.example.newsfeedproject.entity.UserRole.USER;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.groups.Tuple.tuple;
@@ -34,7 +34,7 @@ class CommentServiceTest extends IntegrationTest {
 
     @BeforeEach
     void init() {
-        loginUser = saveUser("홍정기", "1234", "test@spa.com", USER);
+        loginUser = saveUser("홍정기", "1234", "test@spa.com", USER, "intro");
         post = savePost("test", "sample");
         givenLoginUser(loginUser);
     }
@@ -76,7 +76,7 @@ class CommentServiceTest extends IntegrationTest {
     @Test
     void updateCommentWhenOtherUserTry() {
         // given
-        User author = saveUser("윤여준", "1234", "test1@spa.com", USER);
+        User author = saveUser("윤여준", "1234", "test1@spa.com", USER, "intro");
         Comment comment = saveComment("test content", author, post);
         var request = new UpdateCommentRequest(comment.getId(), "after content");
         // when // then
@@ -100,7 +100,7 @@ class CommentServiceTest extends IntegrationTest {
     @Test
     void deleteCommentWhenOtherUserTry() {
         // given
-        User author = saveUser("윤여준", "1234", "test1@spa.com", USER);
+        User author = saveUser("윤여준", "1234", "test1@spa.com", USER, "intro");
         Comment comment = saveComment("test content", author, post);
         // when // then
         assertThatThrownBy(() -> commentService.deleteComment(comment.getId()))

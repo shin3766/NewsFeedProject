@@ -3,7 +3,7 @@ package com.example.newsfeedproject;
 import com.example.newsfeedproject.entity.Comment;
 import com.example.newsfeedproject.entity.Post;
 import com.example.newsfeedproject.entity.User;
-import com.example.newsfeedproject.entity.UserRoleEnum;
+import com.example.newsfeedproject.entity.UserRole;
 import com.example.newsfeedproject.repository.CommentRepository;
 import com.example.newsfeedproject.repository.PostDynamicRepository;
 import com.example.newsfeedproject.repository.PostRepository;
@@ -41,8 +41,8 @@ public class IntegrationTest {
         );
     }
 
-    protected User saveUser(String username, String password, String email, UserRoleEnum role) {
-        User user = new User(username, password, email, role);
+    protected User saveUser(String username, String password, String email, UserRole role, String intro) {
+        User user = new User(username, password, email, role, intro);
         return userRepository.saveAndFlush(user);
     }
 

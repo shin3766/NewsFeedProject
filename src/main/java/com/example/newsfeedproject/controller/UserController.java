@@ -4,7 +4,7 @@ package com.example.newsfeedproject.controller;
 import com.example.newsfeedproject.dto.LoginRequestDto;
 import com.example.newsfeedproject.dto.MsgResponseDto;
 import com.example.newsfeedproject.dto.SignupRequestDto;
-import com.example.newsfeedproject.entity.UserRoleEnum;
+import com.example.newsfeedproject.entity.UserRole;
 import com.example.newsfeedproject.jwt.JwtUtil;
 import com.example.newsfeedproject.service.UserService;
 import jakarta.servlet.http.HttpServletResponse;
@@ -47,7 +47,7 @@ public class UserController {
             return ResponseEntity.badRequest().body(new MsgResponseDto(e.getMessage(), HttpStatus.BAD_REQUEST.value()));
         }
 
-        response.setHeader(JwtUtil.AUTHORIZATION_HEADER, jwtUtil.createToken(loginRequestDto.getUsername(), UserRoleEnum.USER));
+        response.setHeader(JwtUtil.AUTHORIZATION_HEADER, jwtUtil.createToken(loginRequestDto.getUsername(), UserRole.USER));
 
         return ResponseEntity.ok().body(new MsgResponseDto("로그인 성공", HttpStatus.OK.value()));
     }

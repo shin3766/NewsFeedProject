@@ -1,6 +1,6 @@
 package com.example.newsfeedproject.jwt;
 
-import com.example.newsfeedproject.entity.UserRoleEnum;
+import com.example.newsfeedproject.entity.UserRole;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
@@ -46,7 +46,7 @@ public class JwtUtil {
     }
 
     // 토큰 생성
-    public String createToken(String username, UserRoleEnum role) {
+    public String createToken(String username, UserRole role) {
         Date date = new Date();
 
         return BEARER_PREFIX +

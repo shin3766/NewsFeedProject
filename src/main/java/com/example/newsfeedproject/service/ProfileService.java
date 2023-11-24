@@ -5,49 +5,29 @@ import com.example.newsfeedproject.dto.profiledto.ProfileResponseDto;
 import com.example.newsfeedproject.entity.User;
 import com.example.newsfeedproject.repository.ProfileRepository;
 import com.example.newsfeedproject.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.NoSuchElementException;
 
+@RequiredArgsConstructor
 @Service
 public class ProfileService {
 
     private final UserRepository userRepository;
 
-    // 생성자 주입을 이용하여 ProfileRepository 주입
-    public ProfileService(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
-
     @Transactional
     public void updateProfile(Long id, ProfileRequestDto requestDto) {
         User profileUser = userRepository.findById(id)
                 .orElseThrow(NoSuchElementException::new);
-
-        // DTO에서 변경된 필드만 업데이트
-        if (requestDto.getUsername() != null) {
-            profileUser.setUsername(requestDto.getUsername());
-        }
-
-        if (requestDto.getIntro() != null) {
-            profileUser.setIntro(requestDto.getIntro());
-        }
-
-        if (requestDto.getEmail() != null) {
-            profileUser.setEmail(requestDto.getEmail());
-        }
-
-        // 다른 필드도 필요에 따라 추가 업데이트 가능
-
-        userRepository.save(profileUser);
+        profileUser.update(requestDto);
     }
 
 
     public ProfileResponseDto getProfile(Long id) {
         // 해당 ID에 대한 프로필을 찾음
         User user = findProfile(id);
-
         // ProfileUser를 ProfileResponseDto로 변환하여 반환
         return new ProfileResponseDto(user);
     }

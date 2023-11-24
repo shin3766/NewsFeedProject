@@ -22,8 +22,7 @@ public class UserStatusService {
      * @return
      */
     public JwtUser getLoginUser() {
-        User user = new User();
-        user.setId(100L);
+        User user = User.foreign(100L);
         return JwtUser.of(user);
     }
 

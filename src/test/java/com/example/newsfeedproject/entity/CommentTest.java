@@ -4,7 +4,7 @@ import com.example.newsfeedproject.dto.UpdateCommentRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static com.example.newsfeedproject.entity.UserRoleEnum.USER;
+import static com.example.newsfeedproject.entity.UserRole.USER;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class CommentTest {
@@ -14,7 +14,7 @@ class CommentTest {
     void updateComment() {
         // given
         var request = new UpdateCommentRequest(1L, "after content");
-        var user = new User("홍정기", "1234", "spa@test.com", USER);
+        var user = new User("홍정기", "1234", "spa@test.com", USER, "intro");
         var comment = Comment.builder()
                 .user(user)
                 .content("before content")
@@ -30,7 +30,7 @@ class CommentTest {
     void updateCommentFailWhenContentIsNull() {
         // given
         var request = new UpdateCommentRequest(1L, null);
-        var user = new User("홍정기", "1234", "spa@test.com", USER);
+        var user = new User("홍정기", "1234", "spa@test.com", USER, "intro");
         var comment = Comment.builder()
                 .user(user)
                 .content("before content")
@@ -46,7 +46,7 @@ class CommentTest {
     void updateCommentFailWhenContentIsEmpty() {
         // given
         var request = new UpdateCommentRequest(1L, "");
-        var user = new User("홍정기", "1234", "spa@test.com", USER);
+        var user = new User("홍정기", "1234", "spa@test.com", USER, "intro");
         var comment = Comment.builder()
                 .user(user)
                 .content("before content")
