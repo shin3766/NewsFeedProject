@@ -6,7 +6,6 @@ import com.example.newsfeedproject.dto.LoginRequestDto;
 import com.example.newsfeedproject.dto.SignupRequestDto;
 import com.example.newsfeedproject.entity.User;
 import com.example.newsfeedproject.entity.UserRole;
-import com.example.newsfeedproject.jwt.JwtUtil;
 import com.example.newsfeedproject.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -17,6 +16,7 @@ import org.springframework.stereotype.Service;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final UserStatusService userStatusService;
     private final PasswordEncoder passwordEncoder;
 
     public JwtUser login(LoginRequestDto loginRequestDto) {
@@ -33,17 +33,21 @@ public class UserService {
         return new JwtUser(user.getId(), user.getUsername(), user.getRole());
     }
 
-    public void signup(SignupRequestDto requestDto) {
-        String username = requestDto.getUsername();
-        String password = passwordEncoder.encode(requestDto.getPassword());
-        String intro = requestDto.getIntro();
-        String email = requestDto.getEmail();
+    public void signup(SignupRequestDto req) {
 
+        String username = req.username();
+        String password = passwordEncoder.encode(req.password());
+        String intro = req.intro();
+        String email = req.email();
+        String code = req.code();
+
+        if(!userStatusService.matchesEmailAuthCode(email, code)){
+            throw new IllegalArgumentException("이메일 코드가 틀립니다.");
+        }
         // 회원 중복 확인
         if (userRepository.existsByUsername(username)) {
             throw new IllegalArgumentException("중복된 사용자가 존재합니다.");
         }
-
         if (userRepository.existsByEmail(email)) {
             throw new IllegalArgumentException("중복된 Email 입니다.");
         }
@@ -54,7 +58,5 @@ public class UserService {
         User user = new User(username, password, email, role, intro);
         userRepository.save(user);//데이터베이스의 한 로우는 해당하는 엔티티 클래스의 한 객체다
     }
-
-
 }
 
