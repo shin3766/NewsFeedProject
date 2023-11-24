@@ -30,13 +30,14 @@ public class Post {
     private LocalDateTime activatedAt;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     @Builder
-    private Post(String title, String content) {
+    private Post(String title, String content, User user) {
         this.title = title;
         this.content = content;
+        this.user  = user;
     }
 
     public static Post foreign(Long id) {

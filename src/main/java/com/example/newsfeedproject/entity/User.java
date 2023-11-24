@@ -1,5 +1,6 @@
 package com.example.newsfeedproject.entity;
 
+import com.example.newsfeedproject.dto.JwtUser;
 import com.example.newsfeedproject.dto.profiledto.ProfileRequestDto;
 import jakarta.persistence.*;
 import lombok.Builder;
@@ -52,6 +53,14 @@ public class User extends Timestamped {
     public static User foreign(Long id) {
         var user = new User();
         user.id = id;
+        return user;
+    }
+
+    public static User foreign(JwtUser jwtUser){
+        var user = new User();
+        user.id = jwtUser.id();
+        user.role = jwtUser.role();
+        user.username = jwtUser.username();
         return user;
     }
 }

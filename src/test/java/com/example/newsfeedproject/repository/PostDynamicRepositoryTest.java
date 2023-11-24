@@ -4,6 +4,8 @@ import com.example.newsfeedproject.IntegrationTest;
 import com.example.newsfeedproject.dto.PageDto;
 import com.example.newsfeedproject.dto.PostListItemDto;
 import com.example.newsfeedproject.dto.PostSearchConditionParam;
+import com.example.newsfeedproject.entity.User;
+import com.example.newsfeedproject.entity.UserRole;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -15,7 +17,8 @@ class PostDynamicRepositoryTest extends IntegrationTest {
     @Test
     void findListByCondition() {
         // given
-        for (int i = 0; i < 20; i++) savePost("hello" + i, "content" + i);
+        User user = saveUser("john", "1234", "spa@gmail.com", UserRole.USER);
+        for (int i = 0; i < 20; i++) savePost("hello" + i, "content" + i, user);
         var condition = new PostSearchConditionParam(5, 1, "content1");
         // when
         PageDto result = postDynamicRepository.findListByCondition(condition);

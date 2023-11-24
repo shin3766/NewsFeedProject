@@ -35,7 +35,7 @@ class CommentServiceTest extends IntegrationTest {
     @BeforeEach
     void init() {
         loginUser = saveUser("홍정기", "1234", "test@spa.com", USER);
-        post = savePost("test", "sample");
+        post = savePost("test", "sample", loginUser);
         givenLoginUser(loginUser);
     }
 
