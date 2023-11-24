@@ -3,7 +3,6 @@ package com.example.newsfeedproject.jwt;
 import com.example.newsfeedproject.dto.JwtAuthentication;
 import com.example.newsfeedproject.dto.JwtUser;
 import com.example.newsfeedproject.security.UserDetailsServiceImpl;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -42,28 +41,14 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
         Optional<JwtUser> bearerToken = jwtUtil.getCustomerInfoFrom(token, ACCESS_TYPE);
 
-        // 유효한 엑세스 토큰인 경우
-        if (bearerToken.isPresent()) {
-            var user = bearerToken.get();
-            // 인가 처리
-            var authorities = List.of(new SimpleGrantedAuthority(user.role().name()));
-            var authentication = new JwtAuthentication(user, authorities);
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-        }
+        // 유효한 엑세스 토큰인 경우 인가 처리
+        bearerToken.ifPresent(this::setAuthentication);
         filterChain.doFilter(req, res);
     }
 
-    // 인증 처리
-    public void setAuthentication(String username) {
-        SecurityContext context = SecurityContextHolder.createEmptyContext();
-        Authentication authentication = createAuthentication(username);
-        context.setAuthentication(authentication);
-        SecurityContextHolder.setContext(context);
-    }
-
-    // 인증 객체 생성
-    private Authentication createAuthentication(String username) {
-        UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-        return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+    public void setAuthentication(JwtUser user) {
+        var authorities = List.of(new SimpleGrantedAuthority(user.role().name()));
+        var authentication = new JwtAuthentication(user, authorities);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
     }
 }
