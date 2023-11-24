@@ -16,8 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import static com.example.newsfeedproject.entity.UserRole.USER;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.securityContext;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -133,6 +132,59 @@ class CommentControllerTest extends IntegrationTest {
                 .andExpectAll(
                         status().isForbidden(),
                         jsonPath("$.message").value("댓글 수정 권한이 없습니다.")
+                );
+    }
+
+    @DisplayName("댓글 삭제 성공")
+    @Test
+    void deleteComment() throws Exception {
+        // given
+        Comment comment = saveComment("test comment", user, post);
+        SecurityContext context = contextJwtUser(user.getId(), user.getUsername(), user.getRole());
+        // when // then
+        mockMvc.perform(delete("/api/v1/comment/" + comment.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .with(securityContext(context))
+                )
+                .andDo(print())
+                .andExpectAll(
+                        status().isOk(),
+                        jsonPath("$.message").value("댓글 삭제 성공")
+                );
+    }
+
+    @DisplayName("로그인 하지 않은 경우 댓글 삭제 실패")
+    @Test
+    void deleteCommentWhenNotLogin() throws Exception {
+        // given
+        Comment comment = saveComment("test comment", user, post);
+        // when // then
+        mockMvc.perform(delete("/api/v1/comment/" + comment.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andDo(print())
+                .andExpectAll(
+                        status().isForbidden(),
+                        jsonPath("$.message").value("권한이 없습니다.")
+                );
+    }
+
+    @DisplayName("자신이 작성하지 않은 댓글 수정 실패")
+    @Test
+    void deleteCommentWhenAuthorIsNotLoginUser() throws Exception {
+        // given
+        User author = saveUser("정석", "1234", "tes@fd.com", USER);
+        Comment comment = saveComment("test comment", author, post);
+        SecurityContext context = contextJwtUser(user.getId(), user.getUsername(), user.getRole());
+        // when // then
+        mockMvc.perform(delete("/api/v1/comment/" + comment.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .with(securityContext(context))
+                )
+                .andDo(print())
+                .andExpectAll(
+                        status().isForbidden(),
+                        jsonPath("$.message").value("댓글 삭제 권한이 없습니다.")
                 );
     }
 }
