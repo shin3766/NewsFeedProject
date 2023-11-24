@@ -3,7 +3,7 @@ package com.example.newsfeedproject.profile;
 import com.example.newsfeedproject.dto.profiledto.ProfileRequestDto;
 import com.example.newsfeedproject.dto.profiledto.ProfileResponseDto;
 import com.example.newsfeedproject.entity.User;
-import com.example.newsfeedproject.entity.UserRoleEnum;
+import com.example.newsfeedproject.entity.UserRole;
 import com.example.newsfeedproject.repository.UserRepository;
 import com.example.newsfeedproject.service.ProfileService;
 import org.junit.jupiter.api.Test;
@@ -37,7 +37,7 @@ class ProfileServiceTest {
         String password = "PassWo12";
         String intro = "Test intro";
 
-        User mockUser = new User(username, password, email, UserRoleEnum.USER, intro);
+        User mockUser = new User(username, password, email, UserRole.USER, intro);
         when(userRepository.findById(userId)).thenReturn(Optional.of(mockUser));
 
         // Act
@@ -49,15 +49,15 @@ class ProfileServiceTest {
         assertEquals(intro, result1.getIntro());
 
 
-        //fix
+        // Update profile
         username = "AgoodMan";
         intro = "this is tested";
         email = "qiz05@gmail.com";
         ProfileRequestDto profileRequestDto = new ProfileRequestDto(username,intro,email);
-        // Act
+        // Act - Get updated profile
         profileService.updateProfile(userId,profileRequestDto);
         ProfileResponseDto result2 = profileService.getProfile(userId);
-        // Assert
+        // Assert updated profile data
         assertEquals(username, result2.getUsername());
         assertEquals(email, result2.getEmail());
         assertEquals(intro, result2.getIntro());
