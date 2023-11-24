@@ -7,7 +7,6 @@ import com.example.newsfeedproject.dto.UpdateCommentRequest;
 import com.example.newsfeedproject.entity.Comment;
 import com.example.newsfeedproject.entity.Post;
 import com.example.newsfeedproject.exception.NotFoundEntityException;
-import com.example.newsfeedproject.manager.UserStatusManager;
 import com.example.newsfeedproject.repository.CommentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -22,7 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class CommentService {
 
     private final CommentRepository commentRepository;
-    private final UserStatusManager userStatusManager;
+    private final UserStatusService userStatusManager;
 
     public CommentDto createComment(CreateCommentRequest req) {
         var loginUser = userStatusManager.getLoginUser();

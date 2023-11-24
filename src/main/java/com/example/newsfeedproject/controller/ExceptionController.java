@@ -1,0 +1,15 @@
+package com.example.newsfeedproject.controller;
+
+import com.example.newsfeedproject.dto.MessageDto;
+import jakarta.mail.SendFailedException;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+@RestControllerAdvice
+public class ExceptionController {
+
+    @ExceptionHandler({SendFailedException.class})
+    public MessageDto sendFail() {
+        return new MessageDto("이메일 전송에 실패했습니다.");
+    }
+}

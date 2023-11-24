@@ -9,6 +9,16 @@ spring:
     hibernate:
       ddl-auto: create-drop
 
+  mail:
+    host: localhost
+    username: 반려독
+    password:
+    port: 1025
+
 jwt:
   secret:
     key: testkeytestkeyeraskdfjlkasdjflksjdflkjsdlkfjlskdjfmustbechanged
+
+email:
+  auth:
+    subject: "반려멍 이메일 인증코드입니다."
