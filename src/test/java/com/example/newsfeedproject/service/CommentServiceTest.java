@@ -8,7 +8,6 @@ import com.example.newsfeedproject.dto.UpdateCommentRequest;
 import com.example.newsfeedproject.entity.Comment;
 import com.example.newsfeedproject.entity.Post;
 import com.example.newsfeedproject.entity.User;
-import com.example.newsfeedproject.manager.UserStatusManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -31,7 +30,7 @@ class CommentServiceTest extends IntegrationTest {
     @Autowired
     CommentService commentService;
     @MockBean
-    protected UserStatusManager userStatusManager;
+    protected UserStatusService userStatusManager;
 
     User loginUser;
     Post post;
