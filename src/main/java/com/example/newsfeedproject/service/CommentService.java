@@ -29,7 +29,7 @@ public class CommentService {
 
         Comment comment = commentRepository.saveAndFlush(Comment.builder()
                 .content(req.content())
-                .user(User.foreign(loginUser.id()))
+                .user(User.foreign(loginUser))
                 .post(Post.foreign(req.postId()))
                 .build());
         return CommentDto.of(comment);

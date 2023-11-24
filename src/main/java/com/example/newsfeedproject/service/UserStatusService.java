@@ -1,6 +1,7 @@
 package com.example.newsfeedproject.service;
 
 import com.example.newsfeedproject.dto.JwtUser;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -25,7 +26,8 @@ public class UserStatusService {
      */
     public JwtUser getLoginUser() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        return (JwtUser) auth.getPrincipal();
+        if (auth.getPrincipal() instanceof JwtUser) return (JwtUser) auth.getPrincipal();
+        throw new AccessDeniedException("권한이 없습니다.");
     }
 
     public void saveEmailAuthCode(String email, String code) {
