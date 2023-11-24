@@ -16,8 +16,10 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @Transactional
+@DisplayName("댓글 API 통합 테스트")
 class CommentControllerTest extends IntegrationTest {
 
     User user;
@@ -49,4 +51,22 @@ class CommentControllerTest extends IntegrationTest {
                         jsonPath("$.createdAt").exists()
                 );
     }
+
+    @DisplayName("로그인 하지 않은 경우 댓글 생성 실패")
+    @Test
+    void createCommentWhenNotLogin() throws Exception {
+        // given
+        var request = new CreateCommentRequest(post.getId(), "test comment");
+        // when // then
+        mockMvc.perform(post("/api/v1/comment")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(request))
+                )
+                .andDo(print())
+                .andExpectAll(
+                        status().isForbidden(),
+                        jsonPath("$.message").value("권한이 없습니다.")
+                );
+    }
+
 }
