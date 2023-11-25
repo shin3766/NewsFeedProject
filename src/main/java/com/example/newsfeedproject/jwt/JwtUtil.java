@@ -107,18 +107,23 @@ public class JwtUtil {
      * @param type  refresh, access 토큰 타입
      * @return 유저 정보가 담긴 Optinal 객체
      */
-    public Optional<JwtUser> getCustomerInfoFrom(String token, String type) throws JsonProcessingException {
-        if (token == null || !token.startsWith("Bearer")) return Optional.empty();
+    public Optional<JwtUser> getJwtUser(String token, String type)  {
+        try {
+            if (token == null || !token.startsWith("Bearer")) return Optional.empty();
 
-        token = removePrefix(token);
-        if (!validateToken(token)) return Optional.empty();
+            token = removePrefix(token);
+            if (!validateToken(token)) return Optional.empty();
 
-        Claims jwt = getCustomerClaim(token);
-        var jwtUser = objectMapper.readValue(jwt.get("user", String.class), JwtUser.class);
+            Claims jwt = getCustomerClaim(token);
+            var jwtUser = objectMapper.readValue(jwt.get("user", String.class), JwtUser.class);
 
-        String tokenType = jwt.get("type", String.class);
-        if (!tokenType.equals(type)) return Optional.empty();
+            String tokenType = jwt.get("type", String.class);
+            if (!tokenType.equals(type)) return Optional.empty();
 
-        return Optional.of(jwtUser);
+            return Optional.of(jwtUser);
+
+        } catch (JsonProcessingException ex){
+            return Optional.empty();
+        }
     }
 }
