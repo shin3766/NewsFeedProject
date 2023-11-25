@@ -37,7 +37,7 @@ public class PostController {
 
     // DELETE: 선택 게시물 삭제
     @DeleteMapping("/{id}")
-    public Long deletePost(@PathVariable Long id) {
+    public String deletePost(@PathVariable Long id) {
         return postService.deletePost(id);
     }
 }

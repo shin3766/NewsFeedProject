@@ -80,14 +80,14 @@ public class PostService {
     }
 
     // post 선택 삭제
-    public Long deletePost(Long id) {
+    public String deletePost(Long id) {
         // 해당 메모가 DB에 존재하는지 확인
         Post post = findPost(id);
 
         // post 삭제
         postRepository.delete(post);
 
-        return id;
+        return "선택 게시글이 삭제됐습니다.";
     }
 
     // post 찾기
