@@ -41,7 +41,7 @@ public class UserService {
         String email = req.email();
         String code = req.code();
 
-        if(!userStatusService.matchesEmailAuthCode(email, code)){
+        if (!userStatusService.matchesEmailAuthCode(email, code)) {
             throw new IllegalArgumentException("이메일 코드가 틀립니다.");
         }
         // 회원 중복 확인
@@ -57,6 +57,11 @@ public class UserService {
         // 사용자 등록
         User user = new User(username, password, email, role, intro);
         userRepository.save(user);//데이터베이스의 한 로우는 해당하는 엔티티 클래스의 한 객체다
+    }
+
+    public void signOut() {
+        JwtUser loginUser = userStatusService.getLoginUser();
+        userRepository.deleteById(loginUser.id());
     }
 }
 
