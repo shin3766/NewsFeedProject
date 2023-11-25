@@ -1,18 +1,24 @@
 package com.example.newsfeedproject.config;
 
 
+import com.example.newsfeedproject.dto.MessageDto;
 import com.example.newsfeedproject.jwt.JwtAuthorizationFilter;
 import com.example.newsfeedproject.jwt.JwtUtil;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.MediaType;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import static org.springframework.security.web.util.matcher.AntPathRequestMatcher.antMatcher;
@@ -24,6 +30,7 @@ import static org.springframework.security.web.util.matcher.AntPathRequestMatche
 public class WebSecurityConfig {
 
     private final JwtUtil jwtUtil;
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Bean
     public JwtAuthorizationFilter jwtAuthorizationFilter() {
@@ -32,7 +39,7 @@ public class WebSecurityConfig {
 
     // 기본 UserDetailsService 비활성화
     @Bean
-    public UserDetailsService userDetailService(){
+    public UserDetailsService userDetailService() {
         return username -> null;
     }
 
@@ -53,8 +60,34 @@ public class WebSecurityConfig {
                         .anyRequest().authenticated() // 그 외 모든 요청 인증처리
         );
 
+        http.exceptionHandling(config -> {
+                    config.authenticationEntryPoint(errorPoint());
+                    config.accessDeniedHandler(accessDeniedHandler());
+                }
+        );
         // 필터 관리
         http.addFilterBefore(jwtAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
         return http.build();
+    }
+
+    private AccessDeniedHandler accessDeniedHandler() {
+        return (request, response, ex) -> {
+            var message = new MessageDto("권한이 없습니다.");
+            String body = objectMapper.writeValueAsString(message);
+            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+            response.getWriter().write(body);
+        };
+    }
+
+    private AuthenticationEntryPoint errorPoint() {
+        return (request, response, authException) -> {
+            var message = new MessageDto("권한이 없습니다.");
+            String body = objectMapper.writeValueAsString(message);
+            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+            response.getWriter().write(body);
+        };
+
     }
 }

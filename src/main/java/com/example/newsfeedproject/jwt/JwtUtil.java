@@ -1,6 +1,8 @@
 package com.example.newsfeedproject.jwt;
 
 import com.example.newsfeedproject.dto.JwtUser;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -32,6 +34,7 @@ public class JwtUtil {
 
     private final Key key;
     private final SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Autowired
     public JwtUtil(
@@ -58,14 +61,18 @@ public class JwtUtil {
             duration = accessTokenTime;
         }
 
-        return BEARER_PREFIX + Jwts.builder()
-                .setSubject(user.id().toString())
-                .claim("type", type)
-                .claim("user", user)
-                .setExpiration(new Date(new Date().getTime() + duration)) // 만료 시간
-                .setIssuedAt(new Date()) // 발급일
-                .signWith(key, signatureAlgorithm) // 암호화 알고리즘
-                .compact();
+        try {
+            return BEARER_PREFIX + Jwts.builder()
+                    .setSubject(user.id().toString())
+                    .claim("type", type)
+                    .claim("user", objectMapper.writeValueAsString(user))
+                    .setExpiration(new Date(new Date().getTime() + duration)) // 만료 시간
+                    .setIssuedAt(new Date()) // 발급일
+                    .signWith(key, signatureAlgorithm) // 암호화 알고리즘
+                    .compact();
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private String removePrefix(String tokenValue) {
@@ -100,18 +107,23 @@ public class JwtUtil {
      * @param type  refresh, access 토큰 타입
      * @return 유저 정보가 담긴 Optinal 객체
      */
-    public Optional<JwtUser> getCustomerInfoFrom(String token, String type) {
-        if (token == null || !token.startsWith("Bearer")) return Optional.empty();
+    public Optional<JwtUser> getJwtUser(String token, String type)  {
+        try {
+            if (token == null || !token.startsWith("Bearer")) return Optional.empty();
 
-        token = removePrefix(token);
-        if (!validateToken(token)) return Optional.empty();
+            token = removePrefix(token);
+            if (!validateToken(token)) return Optional.empty();
 
-        Claims jwt = getCustomerClaim(token);
-        var jwtUser = (JwtUser) jwt.get("user");
+            Claims jwt = getCustomerClaim(token);
+            var jwtUser = objectMapper.readValue(jwt.get("user", String.class), JwtUser.class);
 
-        String tokenType = jwt.get("type", String.class);
-        if (!tokenType.equals(type)) return Optional.empty();
+            String tokenType = jwt.get("type", String.class);
+            if (!tokenType.equals(type)) return Optional.empty();
 
-        return Optional.of(jwtUser);
+            return Optional.of(jwtUser);
+
+        } catch (JsonProcessingException ex){
+            return Optional.empty();
+        }
     }
 }

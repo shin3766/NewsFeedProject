@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import static com.example.newsfeedproject.entity.UserRole.USER;
 import static org.assertj.core.api.Assertions.assertThat;
 
+@DisplayName("댓글 도메인 테스트")
 class CommentTest {
 
     @DisplayName("댓글 작성자라면 댓글을 수정할 수 있다.")

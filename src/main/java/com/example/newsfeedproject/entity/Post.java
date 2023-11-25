@@ -2,7 +2,10 @@ package com.example.newsfeedproject.entity;
 
 import com.example.newsfeedproject.dto.postDto.PostRequestDto;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -27,14 +30,14 @@ public class Post {
     private LocalDateTime activatedAt;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     @Builder
-    private Post(String title, User user, String content) {
+    private Post(String title, String content, User user) {
         this.title = title;
         this.content = content;
-        this.user = user;
+        this.user  = user;
     }
 
     public static Post foreign(Long id) {

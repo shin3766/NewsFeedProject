@@ -10,6 +10,10 @@ import org.thymeleaf.spring6.SpringTemplateEngine;
 
 import java.util.UUID;
 
+/**
+ * 테스트를 위한 메일서버를 가동해야 테스트를 실행할 수 있습니다.
+ * compose.yml를 통해서 메일 서버를 가동해주세요.
+ */
 @Component
 @RequiredArgsConstructor
 public class MailService {

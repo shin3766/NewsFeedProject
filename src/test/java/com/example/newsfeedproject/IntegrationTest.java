@@ -1,9 +1,12 @@
 package com.example.newsfeedproject;
 
+import com.example.newsfeedproject.dto.JwtAuthentication;
+import com.example.newsfeedproject.dto.JwtUser;
 import com.example.newsfeedproject.entity.Comment;
 import com.example.newsfeedproject.entity.Post;
 import com.example.newsfeedproject.entity.User;
 import com.example.newsfeedproject.entity.UserRole;
+import com.example.newsfeedproject.jwt.JwtUtil;
 import com.example.newsfeedproject.repository.CommentRepository;
 import com.example.newsfeedproject.repository.PostDynamicRepository;
 import com.example.newsfeedproject.repository.PostRepository;
@@ -12,8 +15,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+
+import static com.example.newsfeedproject.entity.UserRole.USER;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -32,10 +42,13 @@ public class IntegrationTest {
     protected CommentRepository commentRepository;
     @Autowired
     protected UserRepository userRepository;
+    @Autowired
+    protected JwtUtil jwtUtil;
 
-    protected Post savePost(String title, String content) {
+    protected Post savePost(String title, String content, User user) {
         return postRepository.saveAndFlush(Post.builder()
                 .title(title)
+                .user(user)
                 .content(content)
                 .build()
         );
@@ -53,5 +66,14 @@ public class IntegrationTest {
                 .user(user)
                 .build()
         );
+    }
+
+    protected SecurityContext contextJwtUser(Long id, String username, UserRole role){
+        SecurityContext context = SecurityContextHolder.createEmptyContext();
+
+        var jwtUser = new JwtUser(id, username, role);
+        var auth = new JwtAuthentication(jwtUser, List.of(new SimpleGrantedAuthority(jwtUser.role().name())));
+        context.setAuthentication(auth);
+        return context;
     }
 }
