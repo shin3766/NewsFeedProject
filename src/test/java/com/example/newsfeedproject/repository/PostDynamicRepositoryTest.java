@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@DisplayName("게시물 동적 쿼리 Repository 테스트")
 class PostDynamicRepositoryTest extends IntegrationTest {
 
     @DisplayName("게시글 목록 조회")

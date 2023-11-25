@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@DisplayName("로그인 유저 상태 관리 서비스 테스트")
 class UserStatusServiceUnitTest {
 
     private final UserStatusService userStatusService = new UserStatusService();

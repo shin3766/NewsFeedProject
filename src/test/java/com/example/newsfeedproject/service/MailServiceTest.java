@@ -10,6 +10,7 @@ import java.util.HashSet;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@DisplayName("메일 서비스 테스트")
 class MailServiceTest extends IntegrationTest {
 
     @Autowired

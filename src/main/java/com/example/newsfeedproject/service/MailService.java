@@ -34,6 +34,7 @@ public class MailService {
         message.setSubject(subject); //제목 설정
         message.setText(createEmailAuthHtml(code), "UTF-8", "html");
 
+        userStatusManager.saveEmailAuthCode(toEmail, code);
         emailSender.send(message);
     }
 
