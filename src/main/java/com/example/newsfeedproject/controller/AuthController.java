@@ -46,10 +46,10 @@ public class AuthController {
     }
 
     @GetMapping("/refresh")
-    public ResponseEntity<?> refresh(@RequestHeader(AUTHORIZATION_HEADER) String token) {
+    public ResponseEntity<?> refresh(@RequestHeader(value = AUTHORIZATION_HEADER, required = false) String token) {
         Optional<JwtUser> bearerToken = jwtUtil.getJwtUser(token, REFRESH_TYPE);
         if (bearerToken.isEmpty())
-            return ResponseEntity.badRequest().body("토큰이 유효하지 않습니다.");
+            return ResponseEntity.badRequest().body(new MessageDto("토큰이 유효하지 않습니다."));
 
         JwtUser user = bearerToken.get();
 

@@ -2,6 +2,7 @@ package com.example.newsfeedproject.controller;
 
 import com.example.newsfeedproject.IntegrationTest;
 import com.example.newsfeedproject.dto.CreateEmailCodeRequest;
+import com.example.newsfeedproject.dto.JwtUser;
 import com.example.newsfeedproject.entity.User;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -9,12 +10,11 @@ import org.springframework.http.MediaType;
 import org.springframework.security.core.context.SecurityContext;
 
 import static com.example.newsfeedproject.entity.UserRole.USER;
+import static com.example.newsfeedproject.jwt.JwtUtil.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.securityContext;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
  * 테스트를 위한 메일서버를 가동해야 테스트를 실행할 수 있습니다.
@@ -68,6 +68,52 @@ class AuthControllerTest extends IntegrationTest {
                 .andExpectAll(
                         status().isForbidden(),
                         jsonPath("$.message").value("권한이 없습니다.")
+                );
+    }
+
+    @DisplayName("토큰 재발급 성공")
+    @Test
+    void issueToken() throws Exception {
+        // given
+        String token = jwtUtil.createToken(new JwtUser(10L, "test", USER), REFRESH_TYPE);
+        // when // then
+        mockMvc.perform(get("/api/v1/refresh")
+                        .header(AUTHORIZATION_HEADER, token)
+                )
+                .andDo(print())
+                .andExpectAll(
+                        status().isOk(),
+                        header().exists(AUTHORIZATION_HEADER),
+                        header().exists(REFRESH_AUTHORIZATION_HEADER)
+                );
+    }
+
+    @DisplayName("엑세스 토큰을 통한 토큰 재발급은 실패한다.")
+    @Test
+    void issueTokenWhenAccessToken() throws Exception {
+        // given
+        String token = jwtUtil.createToken(new JwtUser(10L, "test", USER), ACCESS_TYPE);
+        // when // then
+        mockMvc.perform(get("/api/v1/refresh")
+                        .header(AUTHORIZATION_HEADER, token)
+                )
+                .andDo(print())
+                .andExpectAll(
+                        status().isBadRequest(),
+                        jsonPath("$.message").value("토큰이 유효하지 않습니다.")
+                );
+    }
+
+    @DisplayName("토큰이 없다면 토큰 재발급은 실패한다.")
+    @Test
+    void issueTokenWhenNotExistToken() throws Exception {
+        // given
+        // when // then
+        mockMvc.perform(get("/api/v1/refresh"))
+                .andDo(print())
+                .andExpectAll(
+                        status().isBadRequest(),
+                        jsonPath("$.message").value("토큰이 유효하지 않습니다.")
                 );
     }
 }
