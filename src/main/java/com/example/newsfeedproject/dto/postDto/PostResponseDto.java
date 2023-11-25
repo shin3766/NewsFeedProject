@@ -11,6 +11,7 @@ public class PostResponseDto {
     private String content;
     private LocalDateTime createdAt;
     private LocalDateTime activatedAt;
+    private String author;
 
     public PostResponseDto(Post post) {
         this.id = post.getId();
@@ -18,5 +19,6 @@ public class PostResponseDto {
         this.content = post.getContent();
         this.createdAt = post.getCreatedAt();
         this.activatedAt = post.getActivatedAt();
+        this.author = post.getUser().getUsername();
     }
 }

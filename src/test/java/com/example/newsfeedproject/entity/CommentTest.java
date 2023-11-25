@@ -1,7 +1,6 @@
 package com.example.newsfeedproject.entity;
 
 import com.example.newsfeedproject.dto.UpdateCommentRequest;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -16,7 +15,13 @@ class CommentTest {
     void updateComment() {
         // given
         var request = new UpdateCommentRequest(1L, "after content");
-        var user = new User("홍정기", "1234", "spa@test.com", USER, "intro");
+        var user = User.builder()
+                .username("홍정기")
+                .password("1234")
+                .email("spa@test.com")
+                .role(USER)
+                .intro("intro")
+                .build();
         var comment = Comment.builder()
                 .user(user)
                 .content("before content")
@@ -32,7 +37,13 @@ class CommentTest {
     void updateCommentFailWhenContentIsNull() {
         // given
         var request = new UpdateCommentRequest(1L, null);
-        var user = new User("홍정기", "1234", "spa@test.com", USER, "intro");
+        var user = User.builder()
+                .username("홍정기")
+                .password("1234")
+                .email("spa@test.com")
+                .role(USER)
+                .intro("intro")
+                .build();
         var comment = Comment.builder()
                 .user(user)
                 .content("before content")
@@ -48,7 +59,13 @@ class CommentTest {
     void updateCommentFailWhenContentIsEmpty() {
         // given
         var request = new UpdateCommentRequest(1L, "");
-        var user = new User("홍정기", "1234", "spa@test.com", USER, "intro");
+        var user = User.builder()
+                .username("홍정기")
+                .password("1234")
+                .email("spa@test.com")
+                .role(USER)
+                .intro("intro")
+                .build();
         var comment = Comment.builder()
                 .user(user)
                 .content("before content")

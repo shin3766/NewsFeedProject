@@ -45,12 +45,12 @@ public class Post {
     }
 
     public Post(PostRequestDto requestDto) {
-        this.title = requestDto.getTitle();
-        this.content = requestDto.getContent();
+        this.title = requestDto.title();
+        this.content = requestDto.content();
         this.createdAt = LocalDateTime.now();
     }
     public void update(PostRequestDto requestDto) {
-        this.title = requestDto.getTitle();
-        this.content = requestDto.getContent();
+        this.title = requestDto.title();
+        this.content = requestDto.content();
     }
 }

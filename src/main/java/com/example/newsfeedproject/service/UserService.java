@@ -53,9 +53,15 @@ public class UserService {
         }
 
         UserRole role = UserRole.USER;
-
         // 사용자 등록
-        User user = new User(username, password, email, role, intro);
+        User user = User.builder()
+                .username(username)
+                .password(password)
+                .email(email)
+                .role(role)
+                .intro(intro)
+                .build();
+
         userRepository.save(user);//데이터베이스의 한 로우는 해당하는 엔티티 클래스의 한 객체다
     }
 

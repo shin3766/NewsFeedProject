@@ -23,8 +23,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-import static com.example.newsfeedproject.entity.UserRole.USER;
-
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
@@ -55,7 +53,13 @@ public class IntegrationTest {
     }
 
     protected User saveUser(String username, String password, String email, UserRole role) {
-        User user = new User(username, password, email, role, "intro");
+        User user = User.builder()
+                .username(username)
+                .password(password)
+                .email(email)
+                .role(role)
+                .intro("intro")
+                .build();
         return userRepository.saveAndFlush(user);
     }
 
@@ -68,7 +72,7 @@ public class IntegrationTest {
         );
     }
 
-    protected SecurityContext contextJwtUser(Long id, String username, UserRole role){
+    protected SecurityContext contextJwtUser(Long id, String username, UserRole role) {
         SecurityContext context = SecurityContextHolder.createEmptyContext();
 
         var jwtUser = new JwtUser(id, username, role);

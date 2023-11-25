@@ -1,63 +1,69 @@
 package com.example.newsfeedproject.service;
 
+import com.example.newsfeedproject.IntegrationTest;
+import com.example.newsfeedproject.dto.JwtUser;
 import com.example.newsfeedproject.dto.postDto.PostRequestDto;
 import com.example.newsfeedproject.entity.Post;
-import com.example.newsfeedproject.repository.PostRepository;
-import org.assertj.core.api.Assertions;
+import com.example.newsfeedproject.entity.User;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 
-@SpringBootTest
-class PostServiceTest {
+import static com.example.newsfeedproject.entity.UserRole.USER;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.BDDMockito.given;
 
-    @Autowired
-    PostRepository postRepository;
+class PostServiceTest extends IntegrationTest {
+
     @Autowired
     PostService postService;
 
+    @MockBean
+    UserStatusService userStatusService;
+
     @Test
-    void test1(){
+    void test1() {
         // given
         var request = new PostRequestDto("title", "content");
-
+        User user = saveUser("신유섭", "1234", "test@spa.com", USER);
+        given(userStatusService.getLoginUser()).willReturn(JwtUser.of(user));
         // when
         var response = postService.createPost(request);
-
         // then
-        Assertions.assertThat(response.getTitle()).isEqualTo("title");
-        Assertions.assertThat(response.getContent()).isEqualTo("content");
-        Assertions.assertThat(response.getId()).isNotNull();
-        Assertions.assertThat(response.getCreatedAt()).isNotNull();
-        Assertions.assertThat(response.getActivatedAt()).isNotNull();
+        assertThat(response.getTitle()).isEqualTo("title");
+        assertThat(response.getContent()).isEqualTo("content");
+        assertThat(response.getId()).isNotNull();
+        assertThat(response.getCreatedAt()).isNotNull();
+        assertThat(response.getActivatedAt()).isNotNull();
     }
 
     @Test
-    public void test2() throws Exception {
+    public void test2() {
         //given
         var post = postRepository.save(Post.builder()
                 .title("title test2")
                 .content("test2")
-                        .build()
+                .build()
         );
         //when
         var response = postService.getPost(post.getId());
         //then
-        Assertions.assertThat(response.getTitle()).isEqualTo("title test2");
-        Assertions.assertThat(response.getContent()).isEqualTo("test2");
-        Assertions.assertThat(response.getId()).isEqualTo(post.getId());
-        Assertions.assertThat(response.getCreatedAt()).isBetween(post.getCreatedAt().minusSeconds(1), post.getCreatedAt());
-        Assertions.assertThat(response.getActivatedAt()).isBetween(post.getActivatedAt().minusSeconds(1), post.getActivatedAt());
+        assertThat(response.getTitle()).isEqualTo("title test2");
+        assertThat(response.getContent()).isEqualTo("test2");
+        assertThat(response.getId()).isEqualTo(post.getId());
+        assertThat(response.getCreatedAt()).isBetween(post.getCreatedAt().minusSeconds(1), post.getCreatedAt());
+        assertThat(response.getActivatedAt()).isBetween(post.getActivatedAt().minusSeconds(1), post.getActivatedAt());
     }
 
     @DisplayName("존재하지 않는 게시글 조회시 예외가 발생한다.")
     @Test
-    void test3(){
+    void test3() {
         //given
         Long id = 100L;
         //when //then
-        Assertions.assertThatThrownBy(() -> postService.getPost(id))
+        assertThatThrownBy(() -> postService.getPost(id))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("선택한 게시글은 존재하지 않습니다.");
     }

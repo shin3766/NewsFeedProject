@@ -3,20 +3,15 @@ package com.example.newsfeedproject.service;
 import com.example.newsfeedproject.dto.JwtUser;
 import com.example.newsfeedproject.dto.PageDto;
 import com.example.newsfeedproject.dto.PostSearchConditionParam;
-import com.example.newsfeedproject.entity.User;
-import com.example.newsfeedproject.repository.PostDynamicRepository;
 import com.example.newsfeedproject.dto.postDto.PostRequestDto;
 import com.example.newsfeedproject.dto.postDto.PostResponseDto;
 import com.example.newsfeedproject.entity.Post;
-
+import com.example.newsfeedproject.entity.User;
+import com.example.newsfeedproject.repository.PostDynamicRepository;
 import com.example.newsfeedproject.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @RequiredArgsConstructor
 @Service
@@ -29,21 +24,22 @@ public class PostService {
     private final UserStatusService userStatusService;
 
 
-
     public PageDto getPostList(PostSearchConditionParam condition) {
         return postDynamicRepository.findListByCondition(condition);
     }
 
     // post 등록하기
-    public PostResponseDto createPost(PostRequestDto requestDto){
+    public PostResponseDto createPost(PostRequestDto requestDto) {
         // jwt토큰 생성
         JwtUser loginUser = userStatusService.getLoginUser();
 
         // 새로운 post객체에 requestDto 넣기
+        User user = User.foreign(loginUser);
+
         Post post = Post.builder()
-                .content(requestDto.getContent())
-                .user(User.foreign(loginUser.id()))
-                .title(requestDto.getTitle())
+                .content(requestDto.content())
+                .user(user)
+                .title(requestDto.title())
                 .build();
 
         // jwt토큰으로 작성자 이름 조회
