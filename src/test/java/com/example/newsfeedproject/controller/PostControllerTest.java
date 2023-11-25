@@ -1,7 +1,9 @@
 package com.example.newsfeedproject.controller;
 
+import com.example.newsfeedproject.IntegrationTest;
 import com.example.newsfeedproject.dto.postDto.PostRequestDto;
 import com.example.newsfeedproject.entity.Post;
+import com.example.newsfeedproject.entity.User;
 import com.example.newsfeedproject.repository.CommentRepository;
 import com.example.newsfeedproject.repository.PostRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -14,111 +16,201 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Transactional;
 
+import static com.example.newsfeedproject.entity.UserRole.USER;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.securityContext;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@AutoConfigureMockMvc // 웹 어플리케이션에서 컨트롤러를 테스트할 때, 서블릿 컨테이너를 모킹하기위해 사용
-@SpringBootTest
 @Transactional
-class PostControllerTest {
-    @Autowired
-    PostRepository postRepository;
-    @Autowired
-    MockMvc mockMvc;
-    @Autowired
-    CommentRepository commentRepository;
-    @Autowired
-    ObjectMapper objectMapper;
+@DisplayName("게시글 API 통합 테스트")
+class PostControllerTest extends IntegrationTest {
 
+    User user;
+    Post post;
 
-//    @BeforeEach
-//    void clean() {
-//        postRepository.deleteAll();
-//    }
-
-
-    @DisplayName("인증하지 않은 경우")
-    class HaveNoAuthCases {
-        @DisplayName("게시글 생성 실패")
-        @Test
-        void createPostFailWhenNoUser () throws Exception {
-            //given
-            var title = "미 인증된 사용자 제목";
-            var content = "미 인증된 사용자 내용";
-            var request = new PostRequestDto(title, content);
-            //when //then
-            mockMvc.perform(post("/api/v1/post")
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(request)))
-                    .andExpectAll(
-                            status().isBadRequest(),
-                            jsonPath("$.status").value("bad requests"),
-                            jsonPath("$.message").value("토큰이 유효하지 않습니다.")
-                    );
-        }
-        
-        @DisplayName("선택 게시글 수정 실패")
-        @Test
-        void updatePostFailWhenNoUser () throws Exception {
-            //given
-            
-            //when
-            
-            //then
-        }
-        
-        @DisplayName("선택 게시글 삭제 실패")
-        @Test
-        void deletePostFailWhenNoUser () throws Exception {
-            //given
-            
-            //when
-            
-            //then
-        }
+    @BeforeEach
+    void init() {
+        user = saveUser("한정석", "1234", "test@gmail.com", USER);
     }
 
-
-    @DisplayName("POST 요청 시 DB에 값 저장되는지 확인하기")
+    @DisplayName("게시글 생성 성공")
     @Test
-    void createPost () throws Exception {
+    void createPostSuccess() throws Exception {
         //given
+        SecurityContext context = contextJwtUser(user.getId(), user.getUsername(), user.getRole());
         var title = "제목입니다";
         var content = "내용입니다";
         var request = new PostRequestDto(title, content);
         //when //then
         mockMvc.perform(post("/api/v1/post")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(request))
+                .content(mapper.writeValueAsString(request))
+                .with(securityContext(context))
         ).andDo(print()
         ).andExpectAll(
                 status().isOk(),
                 jsonPath("$.id").exists(),
                 jsonPath("$.title").value(title),
                 jsonPath("$.content").value(content),
+                jsonPath("$.author").value(user.getUsername()),
                 jsonPath("$.createdAt").exists(),
                 jsonPath("$.activatedAt").exists()
         );
+    }
+
+    @DisplayName("로그인되지 않은 유저 게시글 생성 실패")
+    @Test
+    void createPostFailWhenNotLoginUser() throws Exception {
+        //given
+        var request = new PostRequestDto("테스트 제목", "테스트 내용");
+        //when //then
+        mockMvc.perform(post("/api/v1/post")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(request)))
+                .andDo(print())
+                .andExpectAll(
+                        status().isForbidden(),
+                        jsonPath("$.message").value("권한이 없습니다.")
+                );
+    }
+
+    @DisplayName("선택 게시글 조회 성공")
+    @Test
+    void readPostSuccess() throws Exception {
+        //given
+        SecurityContext context = contextJwtUser(user.getId(), user.getUsername(), user.getRole());
+        post = savePost("test post", "test content", user);
+        //when //then
+        mockMvc.perform(get("/api/v1/post/" + post.getId())
+                        .with(securityContext(context)))
+                .andDo(print())
+                .andExpectAll(
+                        status().isOk(),
+                        jsonPath("$.id").value(post.getId()),
+                        jsonPath("$.author").value(user.getUsername()),
+                        jsonPath("$.title").value(post.getTitle()),
+                        jsonPath("$.content").value(post.getContent()),
+                        jsonPath("$.createdAt").exists()
+                );
 
     }
 
+    @DisplayName("선택 게시글 수정 성공")
     @Test
-    void getPost() {
+    void updatePostSuccess() throws Exception {
+        //given
+        post = savePost("test post", "test content", user);
+        var request = new PostRequestDto("new test post", "new test content");
+        SecurityContext context = contextJwtUser(user.getId(), user.getUsername(), user.getRole());
+        //then //when
+        mockMvc.perform(patch("/api/v1/post/" + post.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(request))
+                        .with(securityContext(context)))
+                .andDo(print())
+                .andExpectAll(
+                        status().isOk(),
+                        jsonPath("$.id").value(post.getId()),
+                        jsonPath("$.author").value(user.getUsername()),
+                        jsonPath("$.title").value(post.getTitle()),
+                        jsonPath("$.content").value(post.getContent()),
+                        jsonPath("$.createdAt").exists(),
+                        jsonPath("$.activatedAt").exists()
+                );
     }
 
+    @DisplayName("로그인되지 않은 유저 게시글 수정 실패")
     @Test
-    void updatePost() {
+    void updatePostFailWhenNotLoginUser() throws Exception {
+        //given
+        post = savePost("test post", "test content", user);
+        var request = new PostRequestDto("new test post", "new test content");
+        //when //then
+        mockMvc.perform(patch("/api/v1/post/" + post.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(request))
+                ).andDo(print())
+                .andExpectAll(
+                        status().isForbidden(),
+                        jsonPath("$.message").value("권한이 없습니다.")
+                );
     }
 
+    @DisplayName("작성한 유저가 아닌 다른 유저가 게시글 수정 실패")
     @Test
-    void deletePost() {
+    void updatePostFailWhenUserIsNotAuthor() throws Exception {
+        //given
+        User author = saveUser("일이삼", "1234", "test@test.com", USER);
+        post = savePost("test post", "test content", author);
+        var request = new PostRequestDto("not Author title", "not Author content");
+        SecurityContext context = contextJwtUser(user.getId(), user.getUsername(), user.getRole());
+        //when //then
+        mockMvc.perform(patch("/api/v1/post/" + post.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(request))
+                        .with(securityContext(context))
+                ).andDo(print())
+                .andExpectAll(
+                        status().isForbidden(),
+                        jsonPath("$.message").value("수정 권한이 없습니다.")
+                );
+    }
+
+    @DisplayName("선택 게시글 삭제 성공")
+    @Test
+    void deletePostSuccess() throws Exception {
+        //given
+        post = savePost("test post", "test content", user);
+        SecurityContext context = contextJwtUser(user.getId(), user.getUsername(), user.getRole());
+        //when //then
+        mockMvc.perform(delete("/api/v1/post/" + post.getId())
+                        .with(securityContext(context))
+                ).andDo(print())
+                .andExpectAll(
+                        status().isOk(),
+                        jsonPath("$.message").value("선택 게시글이 삭제됐습니다.")
+                );
+    }
+
+    @DisplayName("로그인되지 않은 유저 게시글 삭제 실패")
+    @Test
+    void deletePostFailWhenNotLoginUser() throws Exception {
+        //given
+        post = savePost("test post", "test content", user);
+        //when //then
+        mockMvc.perform(delete("/api/v1/post/" + post.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                ).andDo(print())
+                .andExpectAll(
+                        status().isForbidden(),
+                        jsonPath("$.message").value("권한이 없습니다.")
+                );
+    }
+
+    @DisplayName("작성한 유저가 아닌 다른 유저가 게시글 삭제 실패")
+    @Test
+    void deletePostFailWhenUserIsNotAuthor() throws Exception {
+        //given
+        User author = saveUser("일이삼", "1234", "test@test.com", USER);
+        post = savePost("test post", "test content", author);
+        SecurityContext context = contextJwtUser(user.getId(), user.getUsername(), user.getRole());
+        //when //then
+        mockMvc.perform(delete("/api/v1/post/" + post.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .with(securityContext(context))
+                ).andDo(print())
+                .andExpectAll(
+                        status().isForbidden(),
+                        jsonPath("$.message").value("삭제 권한이 없습니다.")
+                );
     }
 }
