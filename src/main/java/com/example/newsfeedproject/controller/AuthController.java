@@ -1,7 +1,9 @@
 package com.example.newsfeedproject.controller;
 
 import com.example.newsfeedproject.dto.CreateEmailCodeRequest;
+import com.example.newsfeedproject.dto.JwtUser;
 import com.example.newsfeedproject.dto.MessageDto;
+import com.example.newsfeedproject.jwt.JwtUtil;
 import com.example.newsfeedproject.service.MailService;
 import com.example.newsfeedproject.service.UserService;
 import jakarta.mail.MessagingException;
@@ -10,15 +12,21 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Optional;
+
+import static com.example.newsfeedproject.jwt.JwtUtil.*;
+
 @RestController
 @RequestMapping("/api/v1")
 @RequiredArgsConstructor
 public class AuthController {
 
     private final MailService mailService;
+    private final JwtUtil jwtUtil;
+    private final UserService userService;
+
     @Value("${email.auth.subject}")
     private String EMAIL_AUTH_SUBJECT;
-    private final UserService userService;
 
     @PostMapping("/signup/email")
     public ResponseEntity<?> requestEmailCode(@RequestBody CreateEmailCodeRequest request) {
@@ -32,8 +40,25 @@ public class AuthController {
     }
 
     @DeleteMapping("/signout")
-    public ResponseEntity<?> signOut(){
+    public ResponseEntity<?> signOut() {
         userService.signOut();
         return ResponseEntity.ok(new MessageDto("탈퇴했습니다."));
+    }
+
+    @GetMapping("/refresh")
+    public ResponseEntity<?> refresh(@RequestHeader(AUTHORIZATION_HEADER) String token) {
+        Optional<JwtUser> bearerToken = jwtUtil.getJwtUser(token, REFRESH_TYPE);
+        if (bearerToken.isEmpty())
+            return ResponseEntity.badRequest().body("토큰이 유효하지 않습니다.");
+
+        JwtUser user = bearerToken.get();
+
+        String accessToken = jwtUtil.createToken(user, ACCESS_TYPE);
+        String refreshToken = jwtUtil.createToken(user, REFRESH_TYPE);
+
+        return ResponseEntity.ok()
+                .header(AUTHORIZATION_HEADER, accessToken)
+                .header(REFRESH_AUTHORIZATION_HEADER, refreshToken)
+                .build();
     }
 }
