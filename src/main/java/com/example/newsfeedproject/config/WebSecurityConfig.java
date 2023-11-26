@@ -64,6 +64,7 @@ public class WebSecurityConfig {
                                 antMatcher(POST, "/api/v1/signup/email"),
                                 antMatcher(GET, "/api/v1/posts"),
                                 antMatcher(GET, "/api/v1/post/**"),
+                                antMatcher(GET, "/api/v1/refresh**"),
                                 antMatcher(GET, "/api/v1/comment/**")
                         ).permitAll()
                         .anyRequest().authenticated()

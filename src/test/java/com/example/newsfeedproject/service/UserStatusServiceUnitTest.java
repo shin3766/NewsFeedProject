@@ -43,4 +43,17 @@ class UserStatusServiceUnitTest {
         // then
         assertThat(userStatusService.matchesEmailAuthCode(email, "fdsafasd2")).isFalse();
     }
+
+    @DisplayName("저장된 이메일 코드를 제거 성공시에 matchesEmailAuthCode 의 결과는 항상 false")
+    @Test
+    void removeEmailAuthCode() {
+        // given
+        String email = "test@spa.com";
+        String code = "EFsd34jk";
+        // when
+        userStatusService.saveEmailAuthCode(email, code);
+        userStatusService.removeEmailAuthCode(email);
+        // then
+        assertThat(userStatusService.matchesEmailAuthCode(email, code)).isFalse();
+    }
 }

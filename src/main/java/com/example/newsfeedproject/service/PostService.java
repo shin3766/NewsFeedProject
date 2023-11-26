@@ -67,10 +67,8 @@ public class PostService {
     public Long updatePost(Long id, PostRequestDto requestDto) {
         // DB에 해당 post 있는지 확인
         Post post = findPost(id);
-
         // requestDto로 post객체 업데이트
         post.update(requestDto);
-
         //id 반환
         return id;
     }
