@@ -89,7 +89,6 @@ class PostControllerTest extends IntegrationTest {
                         jsonPath("$.content").value(post.getContent()),
                         jsonPath("$.createdAt").exists()
                 );
-
     }
 
     @DisplayName("선택 게시글 수정 성공")
@@ -149,7 +148,7 @@ class PostControllerTest extends IntegrationTest {
                 ).andDo(print())
                 .andExpectAll(
                         status().isForbidden(),
-                        jsonPath("$.message").value("수정 권한이 없습니다.")
+                        jsonPath("$.message").value("권한이 없습니다.")
                 );
     }
 
@@ -198,7 +197,7 @@ class PostControllerTest extends IntegrationTest {
                 ).andDo(print())
                 .andExpectAll(
                         status().isForbidden(),
-                        jsonPath("$.message").value("삭제 권한이 없습니다.")
+                        jsonPath("$.message").value("권한이 없습니다.")
                 );
     }
 }

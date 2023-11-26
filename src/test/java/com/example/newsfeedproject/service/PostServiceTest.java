@@ -5,6 +5,7 @@ import com.example.newsfeedproject.dto.JwtUser;
 import com.example.newsfeedproject.dto.postDto.PostRequestDto;
 import com.example.newsfeedproject.entity.Post;
 import com.example.newsfeedproject.entity.User;
+import com.example.newsfeedproject.entity.UserRole;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

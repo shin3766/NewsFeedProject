@@ -26,12 +26,9 @@ public class PostService {
         return postDynamicRepository.findListByCondition(condition);
     }
 
-    // post 등록하기
     public PostResponseDto createPost(PostRequestDto requestDto) {
-        // jwt토큰 생성
-        JwtUser loginUser = userStatusService.getLoginUser();
 
-        // 새로운 post객체에 requestDto 넣기
+        JwtUser loginUser = userStatusService.getLoginUser();
         User user = User.foreign(loginUser);
 
         Post post = Post.builder()
@@ -40,52 +37,43 @@ public class PostService {
                 .title(requestDto.title())
                 .build();
 
-        // jwt토큰으로 작성자 이름 조회
-
-        // DB저장
         Post savedPost = postRepository.save(post);
 
-        // post객체 -> responseDto담기
-        PostResponseDto postResponseDto = new PostResponseDto(savedPost);
-
-        return postResponseDto;
+        return new PostResponseDto(savedPost);
     }
 
-    // post 선택 조회
     public PostResponseDto getPost(Long id) {
-        Post post = findPost(id);
-
-        PostResponseDto postResponseDto = new PostResponseDto(post);
-
-        return postResponseDto;
+        Post post = postRepository.findFetchJoinUserById(id)
+                .orElseThrow(() -> new IllegalArgumentException("선택한 게시글은 존재하지 않습니다.") );
+        return new PostResponseDto(post);
     }
 
-    // post 업데이트
     @Transactional
-    public Long updatePost(Long id, PostRequestDto requestDto) {
-        // DB에 해당 post 있는지 확인
-        Post post = findPost(id);
-        // requestDto로 post객체 업데이트
+    public PostResponseDto updatePost(Long id, PostRequestDto requestDto) {
+
+        Post post = postRepository.findFetchJoinUserById(id)
+                .orElseThrow(() -> new IllegalArgumentException("선택한 게시글은 존재하지 않습니다.") );
+
+        checkAuthentication(post);
         post.update(requestDto);
-        //id 반환
-        return id;
+
+        return new PostResponseDto(post);
     }
 
-    // post 선택 삭제
     public String deletePost(Long id) {
-        // 해당 메모가 DB에 존재하는지 확인
-        Post post = findPost(id);
 
-        // post 삭제
+        Post post = postRepository.findFetchJoinUserById(id)
+                .orElseThrow(() -> new IllegalArgumentException("선택한 게시글은 존재하지 않습니다.") );
+
+        checkAuthentication(post);
         postRepository.delete(post);
-
         return "선택 게시글이 삭제됐습니다.";
     }
 
-    // post 찾기
-    private Post findPost(Long id) {
-        return postRepository.findById(id).orElseThrow(() ->
-                new IllegalArgumentException("선택한 게시글은 존재하지 않습니다.")
-        );
+    private void checkAuthentication(Post post){
+        JwtUser loginUser = userStatusService.getLoginUser();
+        if(!post.getUser().getId().equals(loginUser.id())){
+            throw new AccessDeniedException("권한이 없습니다.");
+        }
     }
 }
