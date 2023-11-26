@@ -5,11 +5,11 @@ server:
       force: true
 
 spring:
-#  datasource:
-#    driver-class-name: com.mysql.cj.jdbc.Driver
-#    url: jdbc:mysql://localhost:3307/mydb
-#    username: root
-#    password: example0000
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3307/mydb
+    username: root
+    password: example0000
 
   jpa:
     hibernate:

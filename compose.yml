@@ -4,3 +4,13 @@ services:
     ports:
       - "1025:1025"  # SMTP 포트
       - "8025:8025"  # 웹 인터페이스 포트
+
+  db:
+    image: mysql:8.0.21
+    command: --default-authentication-plugin=mysql_native_password
+    ports:
+      - "3307:3306"
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: example0000
+      MYSQL_DATABASE: mydb
