@@ -21,6 +21,8 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import static org.springframework.http.HttpMethod.GET;
+import static org.springframework.http.HttpMethod.POST;
 import static org.springframework.security.web.util.matcher.AntPathRequestMatcher.antMatcher;
 
 @Configuration
@@ -56,8 +58,16 @@ public class WebSecurityConfig {
         http.authorizeHttpRequests((authorizeHttpRequests) ->
                 authorizeHttpRequests
                         .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll() // resources 접근 허용 설정
-                        .requestMatchers(antMatcher("/api/v1/**")).permitAll() // '/api/user/'로 시작하는 요청 모두 접근 허가
-                        .anyRequest().authenticated() // 그 외 모든 요청 인증처리
+                        .requestMatchers(
+                                antMatcher(POST, "/api/v1/login"),
+                                antMatcher(POST, "/api/v1/signup"),
+                                antMatcher(POST, "/api/v1/signup/email"),
+                                antMatcher(GET, "/api/v1/posts"),
+                                antMatcher(GET, "/api/v1/post/**"),
+                                antMatcher(GET, "/api/v1/refresh**"),
+                                antMatcher(GET, "/api/v1/comment/**")
+                        ).permitAll()
+                        .anyRequest().authenticated()
         );
 
         http.exceptionHandling(config -> {

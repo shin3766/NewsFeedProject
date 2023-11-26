@@ -52,6 +52,7 @@ public class UserService {
             throw new IllegalArgumentException("중복된 Email 입니다.");
         }
 
+        userStatusService.removeEmailAuthCode(email);
         UserRole role = UserRole.USER;
         // 사용자 등록
         User user = User.builder()
@@ -62,7 +63,7 @@ public class UserService {
                 .intro(intro)
                 .build();
 
-        userRepository.save(user);//데이터베이스의 한 로우는 해당하는 엔티티 클래스의 한 객체다
+        userRepository.save(user);
     }
 
     public void signOut() {

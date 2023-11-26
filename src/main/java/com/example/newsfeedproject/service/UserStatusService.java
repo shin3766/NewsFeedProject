@@ -34,6 +34,10 @@ public class UserStatusService {
         redis.put(email, code);
     }
 
+    public void removeEmailAuthCode(String email){
+        redis.remove(email);
+    }
+
     public boolean matchesEmailAuthCode(String email, String code) {
         if (!redis.containsKey(email)) return false;
         return redis.get(email).equals(code);
