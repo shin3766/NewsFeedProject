@@ -1,5 +1,6 @@
 package com.example.newsfeedproject.controller;
 
+import com.example.newsfeedproject.dto.MessageDto;
 import com.example.newsfeedproject.service.PostService;
 import com.example.newsfeedproject.dto.postDto.PostRequestDto;
 import com.example.newsfeedproject.dto.postDto.PostResponseDto;
@@ -31,7 +32,7 @@ public class PostController {
 
     // UPDATE: 선택 게시물 업데이트
     @PatchMapping("/{id}")
-    public Long updatePost(@PathVariable Long id, @RequestBody PostRequestDto requestDto) {
+    public PostResponseDto updatePost(@PathVariable Long id, @RequestBody PostRequestDto requestDto) {
         return postService.updatePost(id, requestDto);
     }
 

@@ -42,8 +42,10 @@ class PostServiceTest extends IntegrationTest {
     @Test
     public void test2() {
         //given
+        var user = saveUser("신유섭", "1234", "tes@spa.com", UserRole.USER);
         var post = postRepository.save(Post.builder()
                 .title("title test2")
+                        .user(user)
                 .content("test2")
                 .build()
         );

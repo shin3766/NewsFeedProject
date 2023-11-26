@@ -10,6 +10,7 @@ import com.example.newsfeedproject.entity.User;
 import com.example.newsfeedproject.repository.PostDynamicRepository;
 import com.example.newsfeedproject.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,11 +19,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class PostService {
 
     private final PostRepository postRepository;
-
     private final PostDynamicRepository postDynamicRepository;
-
     private final UserStatusService userStatusService;
-
 
     public PageDto getPostList(PostSearchConditionParam condition) {
         return postDynamicRepository.findListByCondition(condition);
