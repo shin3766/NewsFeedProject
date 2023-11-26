@@ -29,7 +29,6 @@ jwt:
   refreshToken:
     duration: 60000000
 
-
 email:
   auth:
     subject: "반려멍 이메일 인증코드입니다."

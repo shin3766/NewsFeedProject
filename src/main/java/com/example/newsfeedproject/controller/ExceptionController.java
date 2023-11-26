@@ -21,7 +21,9 @@ public class ExceptionController {
     @ExceptionHandler(NotFoundEntityException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public MessageDto notFound(NotFoundEntityException ex){
-        return new MessageDto(ex.getMessage());
+        String message = ex.getMessage();
+        if(message == null) message = "존재하지 않습니다.";
+        return new MessageDto(message);
     }
 
     @ExceptionHandler({AccessDeniedException.class})
