@@ -17,10 +17,11 @@ public class ProfileService {
     private final UserRepository userRepository;
 
     @Transactional
-    public void updateProfile(Long id, ProfileRequestDto requestDto) {
+    public ProfileResponseDto updateProfile(Long id, ProfileRequestDto requestDto) {
         User profileUser = userRepository.findById(id)
                 .orElseThrow(NoSuchElementException::new);
         profileUser.update(requestDto);
+        return new ProfileResponseDto(profileUser);
     }
 
 

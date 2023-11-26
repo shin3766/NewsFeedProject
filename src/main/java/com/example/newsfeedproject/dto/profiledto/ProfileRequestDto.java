@@ -10,5 +10,5 @@ import lombok.NoArgsConstructor;
 public class ProfileRequestDto {
     private String username;
     private String intro;
-    private String email;
+    private String password;
 }

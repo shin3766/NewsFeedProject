@@ -45,7 +45,7 @@ public class User extends Timestamped {
     public void update(ProfileRequestDto req) {
         if(req.getUsername() != null) this.username = req.getUsername();
         if(req.getIntro() != null) this.intro = req.getIntro();
-        if(req.getEmail() != null) this.email = req.getEmail();
+        if(req.getPassword() != null) this.password = req.getPassword();
     }
 
     public static User foreign(JwtUser jwtUser){
