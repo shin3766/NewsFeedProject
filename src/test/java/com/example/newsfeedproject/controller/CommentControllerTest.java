@@ -187,7 +187,7 @@ class CommentControllerTest extends IntegrationTest {
                 );
     }
 
-    @DisplayName("자신이 작성하지 않은 댓글 수정 실패")
+    @DisplayName("자신이 작성하지 않은 댓글 삭제 실패")
     @Test
     void deleteCommentWhenAuthorIsNotLoginUser() throws Exception {
         // given

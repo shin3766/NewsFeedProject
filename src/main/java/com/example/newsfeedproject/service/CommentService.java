@@ -47,7 +47,7 @@ public class CommentService {
         Comment comment = commentRepository.findById(req.id())
                 .orElseThrow(NotFoundEntityException::new);
 
-        if (!comment.getAuthor().equals(loginUser.username())) {
+        if (!comment.getUser().getId().equals(loginUser.id())) {
             throw new AccessDeniedException("댓글 수정 권한이 없습니다.");
         }
         comment.update(req);
@@ -59,7 +59,7 @@ public class CommentService {
         Comment comment = commentRepository.findById(id)
                 .orElseThrow(NotFoundEntityException::new);
 
-        if (!comment.getAuthor().equals(loginUser.username())) {
+        if (!comment.getUser().getId().equals(loginUser.id())) {
             throw new AccessDeniedException("댓글 삭제 권한이 없습니다.");
         }
         commentRepository.deleteById(id);
