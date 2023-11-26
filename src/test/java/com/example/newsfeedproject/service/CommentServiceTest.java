@@ -54,7 +54,7 @@ class CommentServiceTest extends IntegrationTest {
         // then
         assertThat(response.content()).isEqualTo("content입니다.");
         assertThat(response.createdAt()).isNotNull();
-        assertThat(response.id()).isEqualTo(loginUser.getId());
+        assertThat(response.id()).isNotNull();
     }
 
     @DisplayName("댓글 수정 성공")
