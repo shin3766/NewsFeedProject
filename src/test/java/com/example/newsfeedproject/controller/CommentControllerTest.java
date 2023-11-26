@@ -114,6 +114,29 @@ class CommentControllerTest extends IntegrationTest {
                 );
     }
 
+    @DisplayName("로그인 이후 유저 이름이 변경시에도 수정이 되어야 한다.")
+    @Test
+    void updateCommentSuccessWhenUsernameChanged() throws Exception {
+        // given
+        Comment comment = saveComment("test comment", user, post);
+        var request = new UpdateCommentRequest(comment.getId(), "after");
+        SecurityContext context = contextJwtUser(user.getId(), "first username", user.getRole());
+        // when // then
+        mockMvc.perform(patch("/api/v1/comment")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(request))
+                        .with(securityContext(context))
+                )
+                .andDo(print())
+                .andExpectAll(
+                        status().isOk(),
+                        jsonPath("$.id").value(comment.getId()),
+                        jsonPath("$.content").value(request.content()),
+                        jsonPath("$.author").value(user.getUsername()),
+                        jsonPath("$.createdAt").exists()
+                );
+    }
+
     @DisplayName("로그인 하지 않은 경우 댓글 수정 실패")
     @Test
     void updateCommentFailWhenNotLogin() throws Exception {
@@ -159,6 +182,24 @@ class CommentControllerTest extends IntegrationTest {
         // given
         Comment comment = saveComment("test comment", user, post);
         SecurityContext context = contextJwtUser(user.getId(), user.getUsername(), user.getRole());
+        // when // then
+        mockMvc.perform(delete("/api/v1/comment/" + comment.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .with(securityContext(context))
+                )
+                .andDo(print())
+                .andExpectAll(
+                        status().isOk(),
+                        jsonPath("$.message").value("댓글 삭제 성공")
+                );
+    }
+
+    @DisplayName("로그인 이후 유저 이름이 변경시에도 삭제가 되어야 한다.")
+    @Test
+    void deleteCommentSuccessWhenUsernameChanged() throws Exception {
+        // given
+        Comment comment = saveComment("test comment", user, post);
+        SecurityContext context = contextJwtUser(user.getId(), "first username", user.getRole());
         // when // then
         mockMvc.perform(delete("/api/v1/comment/" + comment.getId())
                         .contentType(MediaType.APPLICATION_JSON)
