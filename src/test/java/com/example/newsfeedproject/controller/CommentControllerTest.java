@@ -55,6 +55,25 @@ class CommentControllerTest extends IntegrationTest {
                 );
     }
 
+    @DisplayName("없는 게시물에 댓글 생성시 실패")
+    @Test
+    void createCommentFailWhenPostNotExist() throws Exception {
+        // given
+        SecurityContext context = contextJwtUser(user.getId(), user.getUsername(), user.getRole());
+        var request = new CreateCommentRequest(10000L, "test comment");
+        // when // then
+        mockMvc.perform(post("/api/v1/comment")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(request))
+                        .with(securityContext(context))
+                )
+                .andDo(print())
+                .andExpectAll(
+                        status().isNotFound(),
+                        jsonPath("$.message").value("존재하지 않은 게시물입니다.")
+                );
+    }
+
     @DisplayName("로그인 하지 않은 경우 댓글 생성 실패")
     @Test
     void createCommentWhenNotLogin() throws Exception {

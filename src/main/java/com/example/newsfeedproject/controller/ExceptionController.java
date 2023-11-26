@@ -1,6 +1,7 @@
 package com.example.newsfeedproject.controller;
 
 import com.example.newsfeedproject.dto.MessageDto;
+import com.example.newsfeedproject.exception.NotFoundEntityException;
 import jakarta.mail.SendFailedException;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
@@ -15,6 +16,12 @@ public class ExceptionController {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public MessageDto sendFail() {
         return new MessageDto("이메일 전송에 실패했습니다.");
+    }
+
+    @ExceptionHandler(NotFoundEntityException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public MessageDto notFound(NotFoundEntityException ex){
+        return new MessageDto(ex.getMessage());
     }
 
     @ExceptionHandler({AccessDeniedException.class})

@@ -9,6 +9,7 @@ import com.example.newsfeedproject.entity.Post;
 import com.example.newsfeedproject.entity.User;
 import com.example.newsfeedproject.exception.NotFoundEntityException;
 import com.example.newsfeedproject.repository.CommentRepository;
+import com.example.newsfeedproject.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -23,9 +24,14 @@ public class CommentService {
 
     private final CommentRepository commentRepository;
     private final UserStatusService userStatusManager;
+    private final PostRepository postRepository;
 
     public CommentDto createComment(CreateCommentRequest req) {
         var loginUser = userStatusManager.getLoginUser();
+
+        if(!postRepository.existsById(req.postId())){
+            throw new NotFoundEntityException("존재하지 않은 게시물입니다.");
+        }
 
         Comment comment = commentRepository.saveAndFlush(Comment.builder()
                 .content(req.content())
