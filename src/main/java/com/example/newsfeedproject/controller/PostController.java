@@ -22,12 +22,6 @@ public class PostController {
         return postService.createPost(requestDto);
     }
 
-    // READ: 게시물 전체 조회
-    @GetMapping
-    public List<PostResponseDto> getPosts() {
-        return postService.getPosts();
-    }
-
     // READ: 게시물 선택 조회
     @GetMapping("/{id}")
     public PostResponseDto getPost(@PathVariable Long id) {
@@ -43,7 +37,7 @@ public class PostController {
 
     // DELETE: 선택 게시물 삭제
     @DeleteMapping("/{id}")
-    public Long deletePost(@PathVariable Long id) {
+    public String deletePost(@PathVariable Long id) {
         return postService.deletePost(id);
     }
 }

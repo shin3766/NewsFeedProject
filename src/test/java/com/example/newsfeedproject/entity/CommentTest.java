@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import static com.example.newsfeedproject.entity.UserRole.USER;
 import static org.assertj.core.api.Assertions.assertThat;
 
+@DisplayName("댓글 도메인 테스트")
 class CommentTest {
 
     @DisplayName("댓글 작성자라면 댓글을 수정할 수 있다.")
@@ -14,7 +15,13 @@ class CommentTest {
     void updateComment() {
         // given
         var request = new UpdateCommentRequest(1L, "after content");
-        var user = new User("홍정기", "1234", "spa@test.com", USER, "intro");
+        var user = User.builder()
+                .username("홍정기")
+                .password("1234")
+                .email("spa@test.com")
+                .role(USER)
+                .intro("intro")
+                .build();
         var comment = Comment.builder()
                 .user(user)
                 .content("before content")
@@ -30,7 +37,13 @@ class CommentTest {
     void updateCommentFailWhenContentIsNull() {
         // given
         var request = new UpdateCommentRequest(1L, null);
-        var user = new User("홍정기", "1234", "spa@test.com", USER, "intro");
+        var user = User.builder()
+                .username("홍정기")
+                .password("1234")
+                .email("spa@test.com")
+                .role(USER)
+                .intro("intro")
+                .build();
         var comment = Comment.builder()
                 .user(user)
                 .content("before content")
@@ -46,7 +59,13 @@ class CommentTest {
     void updateCommentFailWhenContentIsEmpty() {
         // given
         var request = new UpdateCommentRequest(1L, "");
-        var user = new User("홍정기", "1234", "spa@test.com", USER, "intro");
+        var user = User.builder()
+                .username("홍정기")
+                .password("1234")
+                .email("spa@test.com")
+                .role(USER)
+                .intro("intro")
+                .build();
         var comment = Comment.builder()
                 .user(user)
                 .content("before content")

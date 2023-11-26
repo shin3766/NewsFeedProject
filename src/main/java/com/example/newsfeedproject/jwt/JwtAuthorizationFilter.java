@@ -32,7 +32,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
         String token = req.getHeader(AUTHORIZATION_HEADER);
 
-        Optional<JwtUser> bearerToken = jwtUtil.getCustomerInfoFrom(token, ACCESS_TYPE);
+        Optional<JwtUser> bearerToken = jwtUtil.getJwtUser(token, ACCESS_TYPE);
 
         // 유효한 엑세스 토큰인 경우 인가 처리
         bearerToken.ifPresent(this::setAuthentication);
