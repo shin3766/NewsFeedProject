@@ -26,26 +26,28 @@ public class PostDynamicRepository {
                 "ID, " +
                 "TITLE, " +
                 "CREATED_AT ";
-        String from = "FROM POST ";
+        String from = "FROM post ";
         String where = "WHERE CONTENT LIKE '%" + con.keyword() + "%' ";
         String limit = "LIMIT " + offset + ", " + size;
 
         String query = selectItem + from + where + limit;
         String countQuery = selectCount + from + where;
+
         long totalElement = executeCountQuery(countQuery);
         long totalPage = totalElement % size == 0 ? totalElement / size : totalElement / size + 1;
 
-        return jdbcTemplate.query(query, rs -> {
-            var result = new ArrayList<PostListItemDto>();
-            while (rs.next()) {
-                var id = rs.getLong(1);
-                var title = rs.getString(2);
-                var createdAt = rs.getTimestamp("CREATED_AT").toLocalDateTime();
 
-                result.add(new PostListItemDto(id, title, createdAt));
-            }
-            return new PageDto(result, totalElement, totalPage, con.page(), size);
-        });
+            return jdbcTemplate.query(query, rs -> {
+                var result = new ArrayList<PostListItemDto>();
+                while (rs.next()) {
+                    var id = rs.getLong(1);
+                    var title = rs.getString(2);
+                    var createdAt = rs.getTimestamp("CREATED_AT").toLocalDateTime();
+
+                    result.add(new PostListItemDto(id, title, createdAt));
+                }
+                return new PageDto(result, totalElement, totalPage, con.page(), size);
+            });
     }
 
     private long executeCountQuery(String countQuery) {
