@@ -9,6 +9,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ProfileRequestDto {
     private String username;
-    private String contents;
-    private String email;
+    private String intro;
+    private String password;
 }

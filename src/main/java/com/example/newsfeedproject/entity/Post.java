@@ -1,5 +1,6 @@
 package com.example.newsfeedproject.entity;
 
+import com.example.newsfeedproject.dto.postDto.PostRequestDto;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -19,18 +20,37 @@ public class Post {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    @Column
+    @Column(nullable = false)
     private String title;
-    @Column
+    @Column(nullable = false)
     private String content;
     @CreatedDate
     private LocalDateTime createdAt;
     @LastModifiedDate
     private LocalDateTime activatedAt;
-
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
     @Builder
-    private Post(String title, String content) {
+    private Post(String title, String content, User user) {
         this.title = title;
         this.content = content;
+        this.user  = user;
+    }
+
+    public static Post foreign(Long id) {
+        Post post = new Post();
+        post.id = id;
+        return post;
+    }
+
+    public Post(PostRequestDto requestDto) {
+        this.title = requestDto.title();
+        this.content = requestDto.content();
+        this.createdAt = LocalDateTime.now();
+    }
+    public void update(PostRequestDto requestDto) {
+        this.title = requestDto.title();
+        this.content = requestDto.content();
     }
 }

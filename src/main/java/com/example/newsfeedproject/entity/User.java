@@ -1,16 +1,17 @@
 package com.example.newsfeedproject.entity;
 
+import com.example.newsfeedproject.dto.JwtUser;
+import com.example.newsfeedproject.dto.profiledto.ProfileRequestDto;
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Entity
 @Getter
-@Setter
 @NoArgsConstructor
-@Table(name = "users")
-public class User {
+@Table(name = "USERS")
+public class User extends Timestamped {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -25,13 +26,33 @@ public class User {
     private String email;
 
     @Column(nullable = false)
-    @Enumerated(value = EnumType.STRING)
-    private UserRoleEnum role;
+    private String intro;
 
-    public User(String username, String password, String email, UserRoleEnum role) {
+    @Column(nullable = false)
+    @Enumerated(value = EnumType.STRING)
+    private UserRole role;
+
+    @Builder
+    private User(Long id, String username, String password, String email, String intro, UserRole role) {
+        this.id = id;
         this.username = username;
         this.password = password;
         this.email = email;
+        this.intro = intro;
         this.role = role;
+    }
+
+    public void update(ProfileRequestDto req) {
+        if(req.getUsername() != null) this.username = req.getUsername();
+        if(req.getIntro() != null) this.intro = req.getIntro();
+        if(req.getPassword() != null) this.password = req.getPassword();
+    }
+
+    public static User foreign(JwtUser jwtUser){
+        var user = new User();
+        user.id = jwtUser.id();
+        user.role = jwtUser.role();
+        user.username = jwtUser.username();
+        return user;
     }
 }

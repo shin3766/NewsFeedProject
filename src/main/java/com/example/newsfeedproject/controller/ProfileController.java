@@ -1,12 +1,13 @@
 package com.example.newsfeedproject.controller;
 
 
+import com.example.newsfeedproject.dto.MessageDto;
 import com.example.newsfeedproject.dto.profiledto.ProfileRequestDto;
 import com.example.newsfeedproject.dto.profiledto.ProfileResponseDto;
 import com.example.newsfeedproject.service.ProfileService;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.NoSuchElementException;
 
 @RestController
@@ -25,14 +26,14 @@ public class ProfileController {
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<String> updateProfile(@PathVariable Long id, @RequestBody ProfileRequestDto requestDto) {
+    public ResponseEntity<?> updateProfile(@PathVariable Long id, @RequestBody ProfileRequestDto requestDto) {
         try {
-            profileService.updateProfile(id, requestDto);
-            return ResponseEntity.ok("Profile updated successfully");
+            ProfileResponseDto response = profileService.updateProfile(id, requestDto);
+            return ResponseEntity.ok(response);
         } catch (NoSuchElementException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Profile not found");
+            return ResponseEntity.notFound().build();
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to update profile");
+            return ResponseEntity.internalServerError().body(new MessageDto("Failed to update profile"));
         }
     }
 
